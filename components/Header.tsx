@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -75,12 +75,17 @@ export default function Header() {
         )}
         {isCheck && (
           <div className="hidden md:block absolute border-black bg-white z-10 w-48 rounded-lg sd mt-12">
-            <ul className="text-base border-black">
-              <li className="py-3 px-4">내 블로그</li>
-              <li className="md:hidden py-3 px-4">새 글 작성</li>
-              <li className="py-3 px-4">즐겨찾기</li>
-              <li className="py-3 px-4">설정</li>
-              <button onClick={() => signOut()} className="py-3 px-4">
+            <ul className="text-base border-black cursor-pointer">
+              <li className="py-3 px-4 hover:text-sky-500">내 블로그</li>
+              <li className="md:hidden py-3 px-4 hover:text-sky-500">
+                새 글 작성
+              </li>
+              <li className="py-3 px-4 hover:text-sky-500">즐겨찾기</li>
+              <li className="py-3 px-4 hover:text-sky-500">설정</li>
+              <button
+                onClick={() => signOut()}
+                className="py-3 px-4 hover:text-sky-500"
+              >
                 로그아웃
               </button>
             </ul>

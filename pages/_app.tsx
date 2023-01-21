@@ -3,6 +3,7 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import Layout from "../components/Layout";
+import { useRouter } from "next/router";
 
 const oswald = Oswald({
   variable: "--font-oswald",
@@ -19,14 +20,20 @@ const notoSansKR = Noto_Sans_KR({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  return (
+  const router = useRouter();
+
+  return router.pathname !== "/write" ? (
     <SessionProvider session={pageProps.session}>
       <div className={`${notoSansKR.variable} font-kor`}>
         <Layout>
-          <main>
-            <Component {...pageProps} />
-          </main>
+          <Component {...pageProps} />
         </Layout>
+      </div>
+    </SessionProvider>
+  ) : (
+    <SessionProvider session={pageProps.session}>
+      <div className={`${notoSansKR.variable} font-kor`}>
+        <Component {...pageProps} />
       </div>
     </SessionProvider>
   );
