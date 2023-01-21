@@ -1,20 +1,34 @@
 import Link from "next/link";
-import { useRef } from "react";
+import { useState, useRef, SyntheticEvent } from "react";
 
 export default function Write() {
+  const [title, setTitle] = useState("");
+  const textRef = useRef<HTMLTextAreaElement>(null);
+  const onChangeText = (e: SyntheticEvent) => {
+    const target = e.target as HTMLTextAreaElement;
+    if (textRef.current !== null) {
+      textRef.current.style.height = "30px";
+      textRef.current.style.height = `${target.scrollHeight}px`;
+    }
+    setTitle(target.value);
+  };
+
   return (
     <div className="flex">
       <div className="w-full lg:w-1/2">
         <form>
           <div className="flex flex-col">
-            <div className="px-14 py-11">
+            <div className="px-14 py-11 flex flex-col">
               <textarea
                 rows={1}
+                spellCheck={false}
                 className="text-5xl font-bold focus:outline-none w-full resize-none"
                 name="title"
                 placeholder="제목을 입력하세요"
+                value={title}
+                onChange={onChangeText}
+                ref={textRef}
               />
-              <hr />
               <input
                 className="focus:outline-none"
                 name="tag"
@@ -22,7 +36,7 @@ export default function Write() {
                 placeholder="태그를 입력하세요"
               />
               <textarea
-                className="focus:outline-none resize-none"
+                className="focus:outline-none resize-none h-3/4"
                 name="description"
                 placeholder="내용을 입력하세요..."
               />
