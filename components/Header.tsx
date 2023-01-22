@@ -1,11 +1,20 @@
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Header() {
-  const { data: session, status } = useSession();
-  const loading = status === "loading";
+  const { data: session } = useSession();
   const [isCheck, setCheck] = useState(false);
+  const loginHandler = () => {
+    signIn().catch(() => {
+      throw new Error("Login Failed...");
+    });
+  };
+  const logoutHandler = () => {
+    signOut().catch(() => {
+      throw new Error("Logout Failed...");
+    });
+  };
 
   return (
     <div className="flex justify-between items-center">
@@ -24,8 +33,9 @@ export default function Header() {
         {!session && (
           <div className="flex items-center">
             <button
+              type="button"
               className="text-white px-4 py-1 font-bold bg-black hover:bg-slate-800 rounded-full text-sm"
-              onClick={() => signIn()}
+              onClick={loginHandler}
             >
               로그인
             </button>
@@ -83,7 +93,8 @@ export default function Header() {
               <li className="py-3 px-4 hover:text-sky-500">즐겨찾기</li>
               <li className="py-3 px-4 hover:text-sky-500">설정</li>
               <button
-                onClick={() => signOut()}
+                type="button"
+                onClick={logoutHandler}
                 className="py-3 px-4 hover:text-sky-500"
               >
                 로그아웃

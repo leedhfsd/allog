@@ -2,8 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  margin: 0;
+}
 body {
   padding: 0.75rem 1rem 1rem 1rem;
+  margin: 0;
+  overflow: hidden;
+  height: 100%;
 }
 
 .sd {
