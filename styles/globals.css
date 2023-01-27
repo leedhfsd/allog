@@ -9,3 +9,18 @@ body {
 .sd {
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
+
+.sd_b:hover {
+  box-shadow: 0px 1px 0px 0px rgba(0, 0, 255, 2);
+}
+
+.line_clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.transition {
+  box-shadow: 0.25s ease-in 0s, transform 0.25s ease-in 0s;
+}

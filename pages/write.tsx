@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { useState, useRef, SyntheticEvent } from "react";
+import { useState, useRef, SyntheticEvent, useEffect } from "react";
 
 export default function Write() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [option, setOption] = useState(false);
   const textRef = useRef<HTMLTextAreaElement>(null);
+  const tagRef = useRef<HTMLInputElement>(null);
   const onChangeTitle = (e: SyntheticEvent) => {
     const target = e.target as HTMLTextAreaElement;
     if (textRef.current !== null) {
@@ -13,10 +15,23 @@ export default function Write() {
     }
     setTitle(target.value);
   };
-  const onChangeContent = (e: SyntheticEvent) => {
+  const onChangeContent = (e: Event) => {
     const target = e.target as HTMLTextAreaElement;
     setContent(target.value);
   };
+  const onMouseDownOption = () => setOption((value) => !value);
+  const handleClickOutside = (e: Event) => {
+    const target = e.target as HTMLElement;
+    if (option && !tagRef.current?.contains(target)) {
+      setOption(false);
+    }
+  };
+  useEffect(() => {
+    if (option) document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
 
   return (
     <div className="flex h-screen mx-16 lg:mx-24 py-4">
@@ -36,11 +51,20 @@ export default function Write() {
               />
               <hr className="border-b-8 my-4 border-gray-700 w-32" />
               <input
+                ref={tagRef}
+                onMouseDown={onMouseDownOption}
+                autoComplete="off"
                 className="focus:outline-none mb-4 text-xl"
                 name="tag"
                 type="text"
                 placeholder="태그를 입력하세요"
               />
+              {option && (
+                <div className="relative bg-slate-500 text-white z-10 text-xs px-4 py-4 w-1/2 lg:w-2/5">
+                  <p>엔터를 입력하면 태그를 최대 3개까지 등록할 수 있습니다.</p>
+                  <p>등록된 태그를 클릭하면 삭제할 수 있습니다.</p>
+                </div>
+              )}
               <textarea
                 className="focus:outline-none resize-none text-lg"
                 name="description"

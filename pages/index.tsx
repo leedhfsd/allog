@@ -12,29 +12,27 @@ export default function Home() {
   if (isLoading) return <div>Loading...</div>;
   if (!data) return null;
   return (
-    <div className="flex flex-wrap pt-16 text-center">
+    <div className="flex flex-wrap w-full py-16">
       {data.map((article) => (
-        <div className="px-4 py-2 cursor-pointer w-1/2 lg:w-1/4">
+        <div className="px-4 py-4 cursor-pointer w-80 sd_b">
           <Image
             className="rounded-md inline-block"
             src="/sample.gif"
             height={200}
-            width={300}
+            width={350}
           />
-          <div className="">
-            <h1 className="text-base font-bold">{article.title}</h1>
-            <p className="text-sm mb-6 truncate">{article.description}</p>
-            <div className="text-sm text-gray-500">
-              <span className="mx-1">{article.createdAt}</span>
-              <span>{article.hashTag}</span>
+          <h1 className="text-base font-bold my-1 truncate">{article.title}</h1>
+          <p className="text-sm mb-6 line_clamp h-16">{article.description}</p>
+          <div className="text-sm text-gray-500">
+            <div className="truncate">{article.createdAt}</div>
+            <div className="truncate">#{article.hashTag}</div>
+          </div>
+          <div className="flex justify-between">
+            <div>
+              <span>{article.profile}</span>
+              <span>by {article.writer}</span>
             </div>
-            <div className="flex justify-between">
-              <div>
-                <span className="mx-1">{article.profile}</span>
-                <span>by {article.writer}</span>
-              </div>
-              <span>❣ {article.liked}</span>
-            </div>
+            <span>❣ {article.liked}</span>
           </div>
         </div>
       ))}

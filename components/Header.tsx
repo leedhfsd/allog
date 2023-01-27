@@ -45,7 +45,7 @@ export default function Header() {
         {session?.user && (
           <div className="flex items-center">
             <Link
-              className="hidden md:block border border-black px-3 py-1 bg-white hover:bg-black hover:text-white rounded-full mr-5 font-bold"
+              className="hidden md:block border border-black px-4 py-1 bg-white hover:bg-black hover:text-white rounded-full mr-5 font-bold"
               href="/write"
             >
               새 글 작성
