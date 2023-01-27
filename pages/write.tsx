@@ -1,10 +1,18 @@
 import Link from "next/link";
-import { useState, useRef, SyntheticEvent, useEffect } from "react";
+import {
+  useState,
+  useRef,
+  SyntheticEvent,
+  useEffect,
+  KeyboardEvent,
+} from "react";
 
 export default function Write() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [option, setOption] = useState(false);
+  const [tag, setTag] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
   const textRef = useRef<HTMLTextAreaElement>(null);
   const tagRef = useRef<HTMLInputElement>(null);
   const onChangeTitle = (e: SyntheticEvent) => {
@@ -15,7 +23,7 @@ export default function Write() {
     }
     setTitle(target.value);
   };
-  const onChangeContent = (e: Event) => {
+  const onChangeContent = (e: SyntheticEvent) => {
     const target = e.target as HTMLTextAreaElement;
     setContent(target.value);
   };
@@ -26,6 +34,27 @@ export default function Write() {
       setOption(false);
     }
   };
+  const onTagChange = (e: SyntheticEvent) => {
+    const target = e.target as HTMLInputElement;
+    setTagInput(target.value);
+  };
+  const onKeyDownTag = (e: KeyboardEvent) => {
+    if (e.key === "Enter" && tagInput !== "") {
+      e.preventDefault();
+      if (tag.indexOf(tagInput) === -1) {
+        setTag([tagInput, ...tag]);
+      }
+      if (tagRef.current) {
+        tagRef.current.value = "";
+      }
+      setTagInput("");
+    }
+  };
+  const removeTag = (item: string) => {
+    const newTagArray = tag.filter((value) => value !== item);
+    setTag(newTagArray);
+  };
+
   useEffect(() => {
     if (option) document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -50,18 +79,35 @@ export default function Write() {
                 ref={textRef}
               />
               <hr className="border-b-8 my-4 border-gray-700 w-32" />
-              <input
-                ref={tagRef}
-                onMouseDown={onMouseDownOption}
-                autoComplete="off"
-                className="focus:outline-none mb-4 text-xl"
-                name="tag"
-                type="text"
-                placeholder="태그를 입력하세요"
-              />
+              <input className="hidden" type="text" />
+              <div className="w-5/6">
+                {tag.map((item) => {
+                  return (
+                    <div
+                      key={item}
+                      aria-hidden="true"
+                      onClick={() => removeTag(item)}
+                      className="text-sky-500 px-1 mx-2 my-2 cursor-pointer inline-block"
+                    >
+                      {item}
+                    </div>
+                  );
+                })}
+                <input
+                  ref={tagRef}
+                  onChange={onTagChange}
+                  onMouseDown={onMouseDownOption}
+                  autoComplete="off"
+                  onKeyDown={onKeyDownTag}
+                  className="focus:outline-none mb-4 text-xl"
+                  name="tag"
+                  type="text"
+                  placeholder="태그를 입력하세요"
+                />
+              </div>
               {option && (
-                <div className="relative bg-slate-500 text-white z-10 text-xs px-4 py-4 w-1/2 lg:w-2/5">
-                  <p>엔터를 입력하면 태그를 최대 3개까지 등록할 수 있습니다.</p>
+                <div className="relative bg-slate-700 text-white z-10 text-xs px-4 py-4 w-1/2 lg:w-2/5">
+                  <p>엔터를 입력하면 태그를 등록할 수 있습니다.</p>
                   <p>등록된 태그를 클릭하면 삭제할 수 있습니다.</p>
                 </div>
               )}
