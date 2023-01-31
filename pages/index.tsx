@@ -23,10 +23,12 @@ export default function Home() {
             width={350}
           />
           <h1 className="text-base font-bold my-1 truncate">{article.title}</h1>
-          <p className="text-sm mb-6 line_clamp h-16">{article.description}</p>
+          <p className="text-sm mb-6 line_clamp h-16">{article.content}</p>
           <div className="text-sm text-gray-500">
-            <div className="truncate">{article.createdAt}</div>
-            <div className="truncate">#{article.hashtag}</div>
+            <div className="truncate text-sm">{article.createdAt}</div>
+            <div className="truncate text-xs my-0.5">
+              #{article.hashtag.join(" #")}
+            </div>
           </div>
           <div className="flex justify-between">
             <div>

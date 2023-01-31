@@ -73,7 +73,7 @@ export default function Write() {
       if (session?.user) {
         const formData = {
           title,
-          description: content,
+          content,
           hashtag: tag,
           createdAt: `${kst.getFullYear()}년 ${
             kst.getMonth() + 1
@@ -102,10 +102,10 @@ export default function Write() {
 
   return (
     <div className="flex h-screen mx-16 lg:mx-24 py-4">
-      <div className="flex flex-col w-full lg:w-1/2 justify-between">
+      <div className="flex flex-col w-full lg:w-1/2">
         <div>
-          <form>
-            <div className="flex flex-col">
+          <form method="POST" action="/api/articles">
+            <div className="">
               <textarea
                 rows={1}
                 spellCheck={false}
@@ -150,36 +150,37 @@ export default function Write() {
                 </div>
               )}
               <textarea
-                className="focus:outline-none resize-none text-lg"
-                name="description"
+                className="focus:outline-none resize-none text-lg w-full"
+                rows={24}
+                name="content"
                 placeholder="내용을 입력하세요"
                 onChange={onChangeContent}
                 value={content}
               />
+              <div className="flex justify-between items-center mt-4">
+                <Link href="/">
+                  <button type="button" className="text-xl font-bold">
+                    뒤로 가기
+                  </button>
+                </Link>
+                <div>
+                  <button
+                    type="submit"
+                    className="text-sky-500 rounded text-lg mx-1 px-5 font-bold"
+                  >
+                    임시버튼
+                  </button>
+                  <button
+                    type="submit"
+                    onSubmit={handleSubmitArticle}
+                    className="bg-sky-500 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
+                  >
+                    출간하기
+                  </button>
+                </div>
+              </div>
             </div>
           </form>
-        </div>
-        <div className="flex justify-between items-center">
-          <Link href="/">
-            <button type="button" className="text-xl font-bold">
-              뒤로 가기
-            </button>
-          </Link>
-          <div>
-            <button
-              type="submit"
-              className="text-sky-500 rounded text-lg mx-1 px-5 font-bold"
-            >
-              임시버튼
-            </button>
-            <button
-              type="submit"
-              onClick={handleSubmitArticle}
-              className="bg-sky-500 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
-            >
-              출간하기
-            </button>
-          </div>
         </div>
       </div>
       {fail && (

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { useRouter } from "next/router";
+import { NextResponse } from "next/server";
 import { Article } from "../../interfaces";
 import clientPromise from "../../lib/db/db";
 
@@ -13,14 +13,18 @@ export default async function handler(
   if (req.method === "POST") {
     const article: Article = {
       title: req.body.title,
-      description: req.body.content,
+      content: req.body.content,
       hashtag: req.body.hashtag,
       createdAt: req.body.createdAt,
       liked: 0,
       writer: req.body.writer,
       profile: req.body.profile,
     };
-    articleCollection.insertOne(article);
-    res.status(200).redirect("/");
+    try {
+      await articleCollection.insertOne(article);
+      res.redirect(307, "/");
+    } catch (err) {
+      res.status(500).send({ error: "failed to fetch data" });
+    }
   }
 }

@@ -1,6 +1,6 @@
 export type Article = {
   title: string;
-  description: string;
+  content: string;
   hashtag: string[];
   createdAt: string;
   liked: number;
