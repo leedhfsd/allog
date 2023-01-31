@@ -16,6 +16,7 @@ export default function Home() {
       {data.map((article) => (
         <div className="px-4 py-4 cursor-pointer w-80 sd_b">
           <Image
+            alt="sample"
             className="rounded-md inline-block"
             src="/sample.gif"
             height={200}
@@ -25,12 +26,19 @@ export default function Home() {
           <p className="text-sm mb-6 line_clamp h-16">{article.description}</p>
           <div className="text-sm text-gray-500">
             <div className="truncate">{article.createdAt}</div>
-            <div className="truncate">#{article.hashTag}</div>
+            <div className="truncate">#{article.hashtag}</div>
           </div>
           <div className="flex justify-between">
             <div>
-              <span>{article.profile}</span>
-              <span>by {article.writer}</span>
+              <img
+                className="rounded-full bg-white h-8 w-8 bg-cover mr-1 inline"
+                alt="profile"
+                src={article.profile}
+              />
+              <span className="text-xs font-bold">
+                <span className="text-gray-500 text-xs">by</span>{" "}
+                {article.writer}
+              </span>
             </div>
             <span>❣ {article.liked}</span>
           </div>

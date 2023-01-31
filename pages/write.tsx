@@ -6,6 +6,7 @@ import {
   useEffect,
   KeyboardEvent,
 } from "react";
+import { useSession } from "next-auth/react";
 
 export default function Write() {
   const [title, setTitle] = useState("");
@@ -13,8 +14,10 @@ export default function Write() {
   const [option, setOption] = useState(false);
   const [tag, setTag] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+  const [fail, setFail] = useState(false);
   const textRef = useRef<HTMLTextAreaElement>(null);
   const tagRef = useRef<HTMLInputElement>(null);
+  const { data: session } = useSession();
   const onChangeTitle = (e: SyntheticEvent) => {
     const target = e.target as HTMLTextAreaElement;
     if (textRef.current !== null) {
@@ -53,6 +56,41 @@ export default function Write() {
   const removeTag = (item: string) => {
     const newTagArray = tag.filter((value) => value !== item);
     setTag(newTagArray);
+  };
+  const handleSubmitArticle = (e: SyntheticEvent) => {
+    if (title !== "" && session !== null) {
+      setFail(false);
+    } else {
+      setFail(true);
+      setTimeout(() => setFail(false), 1200);
+      return null;
+    }
+    e.preventDefault();
+    const curDate = new Date();
+    const utc = curDate.getTime() + curDate.getTimezoneOffset() * 60 * 1000;
+    const kst = new Date(utc + 9 * 60 * 60 * 1000);
+    const postData = async () => {
+      if (session?.user) {
+        const formData = {
+          title,
+          description: content,
+          hashtag: tag,
+          createdAt: `${kst.getFullYear()}년 ${
+            kst.getMonth() + 1
+          }월 ${kst.getDate()}일`,
+          writer: session.user.name,
+          profile: session.user.image,
+        };
+        fetch("/api/write", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+      }
+    };
+    postData();
   };
 
   useEffect(() => {
@@ -136,6 +174,7 @@ export default function Write() {
             </button>
             <button
               type="submit"
+              onClick={handleSubmitArticle}
               className="bg-sky-500 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
             >
               출간하기
@@ -143,6 +182,11 @@ export default function Write() {
           </div>
         </div>
       </div>
+      {fail && (
+        <div className="top-4 right-4 bg-red-500 text-white text-base w-fit rounded px-4 py-1 absolute z-20">
+          <p>포스트에 실패하였습니다. 로그인과 제목 입력은 필수입니다.</p>
+        </div>
+      )}
       <div className="hidden lg:block lg:w-1/2">
         <p>마크다운 영역</p>
       </div>
