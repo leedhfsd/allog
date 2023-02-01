@@ -7,6 +7,7 @@ import {
   KeyboardEvent,
 } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export default function Write() {
   const [title, setTitle] = useState("");
@@ -18,6 +19,10 @@ export default function Write() {
   const textRef = useRef<HTMLTextAreaElement>(null);
   const tagRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
+  const router = useRouter();
+  const redirect = async () => {
+    await router.push("/");
+  };
   const onChangeTitle = (e: SyntheticEvent) => {
     const target = e.target as HTMLTextAreaElement;
     if (textRef.current !== null) {
@@ -62,7 +67,7 @@ export default function Write() {
       setFail(false);
     } else {
       setFail(true);
-      setTimeout(() => setFail(false), 1200);
+      setTimeout(() => setFail(false), 1500);
       return null;
     }
     e.preventDefault();
@@ -81,7 +86,7 @@ export default function Write() {
           writer: session.user.name,
           profile: session.user.image,
         };
-        fetch("/api/write", {
+        await fetch("/api/write", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -90,7 +95,11 @@ export default function Write() {
         });
       }
     };
-    postData();
+    postData()
+      .then(() => redirect())
+      .catch((err) => {
+        throw err;
+      });
   };
 
   useEffect(() => {
@@ -104,7 +113,7 @@ export default function Write() {
     <div className="flex h-screen mx-16 lg:mx-24 py-4">
       <div className="flex flex-col w-full lg:w-1/2">
         <div>
-          <form method="POST" action="/api/articles">
+          <form>
             <div className="">
               <textarea
                 rows={1}
@@ -151,33 +160,33 @@ export default function Write() {
               )}
               <textarea
                 className="focus:outline-none resize-none text-lg w-full"
-                rows={24}
+                rows={23}
                 name="content"
                 placeholder="내용을 입력하세요"
                 onChange={onChangeContent}
                 value={content}
               />
-              <div className="flex justify-between items-center mt-4">
-                <Link href="/">
-                  <button type="button" className="text-xl font-bold">
-                    뒤로 가기
-                  </button>
-                </Link>
-                <div>
-                  <button
-                    type="submit"
-                    className="text-sky-500 rounded text-lg mx-1 px-5 font-bold"
-                  >
-                    임시버튼
-                  </button>
-                  <button
-                    type="submit"
-                    onSubmit={handleSubmitArticle}
-                    className="bg-sky-500 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
-                  >
-                    출간하기
-                  </button>
-                </div>
+            </div>
+            <div className="flex justify-between items-center mt-4">
+              <Link href="/">
+                <button type="button" className="text-xl font-bold">
+                  뒤로 가기
+                </button>
+              </Link>
+              <div>
+                <button
+                  type="button"
+                  className="text-sky-500 rounded text-lg mx-1 px-5 font-bold"
+                >
+                  임시버튼
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmitArticle}
+                  className="bg-sky-500 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
+                >
+                  출간하기
+                </button>
               </div>
             </div>
           </form>

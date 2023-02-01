@@ -1,21 +1,19 @@
-import { useEffect, useState } from "react";
 import useSwr from "swr";
 import { Article } from "../interfaces";
-import Image from "next/image";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Home() {
   const { data, error, isLoading } = useSwr<Article[]>("api/articles", fetcher);
 
-  if (error) return <div>Failed to load users</div>;
-  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>게시글을 불러오는 것을 실패하였습니다.</div>;
+  if (isLoading) return <div>로딩중...</div>;
   if (!data) return null;
   return (
-    <div className="flex flex-wrap w-full py-16">
+    <div className="flex flex-wrap w-full py-16 justify-evenly">
       {data.map((article) => (
         <div className="px-4 py-4 cursor-pointer w-80 sd_b">
-          <Image
+          <img
             alt="sample"
             className="rounded-md inline-block"
             src="/sample.gif"
@@ -26,7 +24,7 @@ export default function Home() {
           <p className="text-sm mb-6 line_clamp h-16">{article.content}</p>
           <div className="text-sm text-gray-500">
             <div className="truncate text-sm">{article.createdAt}</div>
-            <div className="truncate text-xs my-0.5">
+            <div className="truncate text-xs my-1">
               #{article.hashtag.join(" #")}
             </div>
           </div>

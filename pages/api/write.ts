@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { NextResponse } from "next/server";
 import { Article } from "../../interfaces";
 import clientPromise from "../../lib/db/db";
 
@@ -22,7 +21,7 @@ export default async function handler(
     };
     try {
       await articleCollection.insertOne(article);
-      res.redirect(307, "/");
+      res.status(200).send("Post Completed");
     } catch (err) {
       res.status(500).send({ error: "failed to fetch data" });
     }
