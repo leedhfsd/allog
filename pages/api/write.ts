@@ -10,14 +10,15 @@ export default async function handler(
   const database = client.db();
   const articleCollection = database.collection("articleDB");
   if (req.method === "POST") {
+    const formData = req.body as Article;
     const article: Article = {
-      title: req.body.title,
-      content: req.body.content,
-      hashtag: req.body.hashtag,
-      createdAt: req.body.createdAt,
+      title: formData.title,
+      content: formData.content,
+      hashtag: formData.hashtag,
+      createdAt: formData.createdAt,
       liked: 0,
-      writer: req.body.writer,
-      profile: req.body.profile,
+      writer: formData.writer,
+      profile: formData.profile,
     };
     try {
       await articleCollection.insertOne(article);

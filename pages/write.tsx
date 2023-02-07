@@ -68,7 +68,7 @@ export default function Write() {
     } else {
       setFail(true);
       setTimeout(() => setFail(false), 1500);
-      return null;
+      return;
     }
     e.preventDefault();
     const curDate = new Date();
