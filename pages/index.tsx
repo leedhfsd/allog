@@ -14,7 +14,10 @@ export default function Home() {
   return (
     <div className="flex flex-wrap my-12">
       {data.map((article) => (
-        <div className="sm:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 px-4 py-4 cursor-pointer">
+        <div
+          className="sm:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 px-4 py-4 cursor-pointer"
+          key={article._id}
+        >
           <Link
             href={`/@${article.writer}/${article.title.split(" ").join("-")}`}
           >
@@ -32,7 +35,7 @@ export default function Home() {
                 <div className="truncate text-sm">{article.createdAt}</div>
                 <div className="my-0.5 h-5 truncate text-sky-600">
                   {article.hashtag.map((item) => (
-                    <span className="">#{item} </span>
+                    <span key={item}>#{item} </span>
                   ))}
                 </div>
               </div>

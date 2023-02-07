@@ -11,7 +11,7 @@ export default async function handler(
   const articleCollection = database.collection("articleDB");
   if (req.method === "POST") {
     const formData = req.body as Article;
-    const article: Article = {
+    const article = {
       title: formData.title,
       content: formData.content,
       hashtag: formData.hashtag,

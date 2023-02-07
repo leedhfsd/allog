@@ -20,5 +20,6 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": [1, { extensions: [".ts", ".tsx"] }],
     "react/jsx-props-no-spreading": ["off"],
+    "no-underscore-dangle": ["error", { allow: ["_id"] }],
   },
 };
