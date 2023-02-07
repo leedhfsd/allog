@@ -153,14 +153,14 @@ export default function Write() {
                 />
               </div>
               {option && (
-                <div className="relative bg-slate-700 text-white z-10 text-xs px-4 py-4 w-1/2 lg:w-2/5">
+                <div className="absolute bg-slate-700 text-white z-10 text-xs px-4 py-4 w-1/2 lg:w-2/5">
                   <p>엔터를 입력하면 태그를 등록할 수 있습니다.</p>
                   <p>등록된 태그를 클릭하면 삭제할 수 있습니다.</p>
                 </div>
               )}
               <textarea
                 className="focus:outline-none resize-none text-lg w-full"
-                rows={23}
+                rows={24}
                 name="content"
                 placeholder="내용을 입력하세요"
                 onChange={onChangeContent}
@@ -173,7 +173,7 @@ export default function Write() {
                   뒤로 가기
                 </button>
               </Link>
-              <div>
+              <div className="my-2">
                 <button
                   type="button"
                   className="text-sky-500 rounded text-lg mx-1 px-5 font-bold"
