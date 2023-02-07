@@ -19,7 +19,19 @@ export default function Home() {
           key={article._id}
         >
           <Link
-            href={`/@${article.writer}/${article.title.split(" ").join("-")}`}
+            as={`/article/@${article.writer}/${encodeURIComponent(article.title)
+              .split("%20")
+              .join("-")}`}
+            href={{
+              pathname: `/article/@${article.writer}/${encodeURIComponent(
+                article.title,
+              )
+                .split("%20")
+                .join("-")}`,
+              query: {
+                ...article,
+              },
+            }}
           >
             <div className="post-card">
               <img

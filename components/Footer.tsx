@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer>
-      <div className="flex flex-color text-center items-center text-sm justify-center my-2">
+      <div className="flex flex-color text-center items-center text-sm justify-center my-2 font-bold">
         <Link href="https://github.com/leedhfsd" target="_blank">
           <div className="flex flex-row items-center">
             <svg
