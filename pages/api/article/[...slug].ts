@@ -1,3 +1,4 @@
+import type { WithId, Document } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "../../../lib/db/db";
 
@@ -9,7 +10,7 @@ export default async function handler(
   const database = client.db();
   const { slug } = req.query;
   const articleCollection = database.collection("articleDB");
-  let data = [];
+  let data: WithId<Document>[] = [];
   if (slug && slug.length === 1) {
     try {
       const writer = decodeURIComponent(slug[0]);
@@ -21,12 +22,11 @@ export default async function handler(
     } catch (err) {
       res.status(500).json({ error: "Failed to fetch data" });
     }
-  } else if (slug && slug.length === 2) {
+  } else if (slug && slug.length >= 2) {
     try {
-      const writer = decodeURIComponent(slug[0]);
-      const title = decodeURIComponent(slug[1]);
+      const articleId = parseInt(slug[1], 10);
       const fetchData = await articleCollection
-        .find({ writer })
+        .find({ _id: articleId })
         .sort({ _id: -1 })
         .toArray();
       data = fetchData;
@@ -40,5 +40,4 @@ export default async function handler(
   } else {
     res.status(404).send("404 Not Found");
   }
-  const data = await articleCollection.find().sort({ _id: -1 }).toArray();
 }

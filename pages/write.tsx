@@ -78,9 +78,10 @@ export default function Write() {
       if (session?.user) {
         let slug = title
           .replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>{}[\]\\/]/gim, "")
-          .replace("\n", " ")
+          .replace(/\n/gim, " ")
           .split(" ")
-          .join("-");
+          .join("-")
+          .trim();
         if (!slug) {
           slug = `${curDate.getTime()}`;
         }
