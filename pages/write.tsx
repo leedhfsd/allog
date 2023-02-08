@@ -76,6 +76,14 @@ export default function Write() {
     const kst = new Date(utc + 9 * 60 * 60 * 1000);
     const postData = async () => {
       if (session?.user) {
+        let slug = title
+          .replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>{}[\]\\/]/gim, "")
+          .replace("\n", " ")
+          .split(" ")
+          .join("-");
+        if (!slug) {
+          slug = `${curDate.getTime()}`;
+        }
         const formData = {
           title,
           content,
@@ -85,6 +93,7 @@ export default function Write() {
           }월 ${kst.getDate()}일`,
           writer: session.user.name,
           profile: session.user.image,
+          slug,
         };
         await fetch("/api/write", {
           method: "POST",

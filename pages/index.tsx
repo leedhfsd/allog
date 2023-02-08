@@ -19,15 +19,9 @@ export default function Home() {
           key={article._id}
         >
           <Link
-            as={`/article/@${article.writer}/${encodeURIComponent(article.title)
-              .split("%20")
-              .join("-")}`}
+            as={`/article/@${article.writer}/${article._id}/${article.slug}`}
             href={{
-              pathname: `/article/@${article.writer}/${encodeURIComponent(
-                article.title,
-              )
-                .split("%20")
-                .join("-")}`,
+              pathname: `/article/@${article.writer}/${article._id}/${article.slug}`,
               query: {
                 ...article,
               },

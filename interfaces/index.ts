@@ -7,4 +7,5 @@ export type Article = {
   liked: number;
   writer: string;
   profile: string;
+  slug: string;
 };
