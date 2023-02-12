@@ -1,5 +1,5 @@
 export type Article = {
-  _id: string;
+  _id: number;
   title: string;
   content: string;
   hashtag: string[];
