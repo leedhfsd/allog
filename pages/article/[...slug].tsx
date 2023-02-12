@@ -1,43 +1,39 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Article } from "../../interfaces";
 
 function Post({
   data,
   slug,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const articles = data as Article[];
+  const [article, setArticle] = useState<Article[]>([]);
+  useEffect(() => {
+    setArticle(data as Article[]);
+  }, [data, slug]);
   const slugs = slug as string[];
-  if (slugs.length === 1) {
+  if (slugs.length === 1 && article.length > 0) {
     return (
       <div className="flex flex-col justify-center py-24 items-center">
         <div className="flex flex-row items-center mb-8">
           <img
             className="rounded-full mr-6"
-            src={articles[articles.length - 1].profile}
+            src={article[article.length - 1].profile}
             width={128}
             height={128}
             alt="user_profile"
           />
-          <div className="text-2xl font-bold">{articles[0].writer}</div>
+          <div className="text-2xl font-bold">{slugs[0]}</div>
         </div>
         <div>
           <p className="text-xl font-bold text-sky-700">
-            {articles[0].writer}의 포스트를 확인하세요.
+            {slugs[0]}이 작성한 글들을 확인하세요.
           </p>
           <hr className="border-b-2 my-4 border-sky-700 w-full" />
         </div>
-        {articles.map((article) => (
-          <div className="cursor-pointer my-16" key={article._id}>
-            <Link
-              as={`/article/@${article.writer}/${article._id}/${article.slug}`}
-              href={{
-                pathname: `/article/@${article.writer}/${article._id}/${article.slug}`,
-                query: {
-                  ...article,
-                },
-              }}
-            >
+        {article.map((post) => (
+          <div className="cursor-pointer my-16" key={post._id}>
+            <Link href={`/article/@${post.writer}/${post._id}/${post.slug}`}>
               <div className="">
                 <img
                   alt="sample"
@@ -45,17 +41,15 @@ function Post({
                   src="/sample.gif"
                 />
                 <h1 className="text-2xl font-bold my-1 truncate">
-                  {article.title}
+                  {post.title}
                 </h1>
-                <p className="text-base mb-4 line_clamp h-8">
-                  {article.content}
-                </p>
+                <p className="text-base mb-4 line_clamp h-8">{post.content}</p>
                 <div>
-                  {article.hashtag.map((item) => {
+                  {post.hashtag.map((item) => {
                     return (
                       <a
                         key={item}
-                        href={`article/${item}`}
+                        href={`post/${item}`}
                         className="text-sky-500 px-1 mx-2 my-4 cursor-pointer inline-block text-base"
                       >
                         {item}
@@ -64,7 +58,7 @@ function Post({
                   })}
                 </div>
                 <div className="truncate text-sm text-gray-400">
-                  {article.createdAt}
+                  {post.createdAt}
                 </div>
               </div>
             </Link>
