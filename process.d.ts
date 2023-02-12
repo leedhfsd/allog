@@ -5,5 +5,6 @@ declare namespace NodeJS {
     GOOGLE_ID: string;
     GOOGLE_SECRET: string;
     MONGODB_URI: string;
+    BASE_URL: string;
   }
 }

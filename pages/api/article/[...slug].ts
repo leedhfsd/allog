@@ -24,9 +24,10 @@ export default async function handler(
     }
   } else if (slug && slug.length >= 2) {
     try {
+      const writer = decodeURIComponent(slug[0]);
       const articleId = parseInt(slug[1], 10);
       const fetchData = await articleCollection
-        .find({ _id: articleId })
+        .find({ writer, _id: articleId })
         .sort({ _id: -1 })
         .toArray();
       data = fetchData;

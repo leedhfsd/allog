@@ -92,7 +92,7 @@ export default function Write() {
           createdAt: `${kst.getFullYear()}년 ${
             kst.getMonth() + 1
           }월 ${kst.getDate()}일`,
-          writer: session.user.name,
+          writer: session.user.email,
           profile: session.user.image,
           slug,
         };
