@@ -12,7 +12,7 @@ export default function Home() {
   if (isLoading) return <div>로딩중...</div>;
   if (!data) return null;
   return (
-    <div className="flex flex-wrap my-12">
+    <div className="flex flex-wrap my-12 min-h-[728px]">
       {data.map((article) => (
         <div
           className="sm:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 px-4 py-4 cursor-pointer"
@@ -36,7 +36,9 @@ export default function Home() {
               <h1 className="text-base font-bold my-1 truncate">
                 {article.title}
               </h1>
-              <p className="text-sm mb-6 line_clamp h-16">{article.content}</p>
+              <p className="text-sm mb-6 line_clamp h-16 whitespace-pre-wrap">
+                {article.content}
+              </p>
               <div className="text-sm text-gray-500">
                 <div className="truncate text-sm">{article.createdAt}</div>
                 <div className="my-0.5 h-5 truncate text-sky-600">
@@ -57,7 +59,7 @@ export default function Home() {
                     {article.writer}
                   </span>
                 </div>
-                <span>❣ {article.liked}</span>
+                <span>❤ {article.liked}</span>
               </div>
             </div>
           </Link>
