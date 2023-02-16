@@ -1,6 +1,7 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Article } from "../../interfaces";
 
@@ -16,7 +17,9 @@ function Post({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [article, setArticle] = useState<Article[]>([]);
   const [user, setUser] = useState("");
+  const [isDelete, setisDelete] = useState(false);
   const { data: session } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     if (session && session.user) {
@@ -26,6 +29,11 @@ function Post({
     setArticle(data as Article[]);
   }, [data, slug, session]);
   const slugs = slug as string[];
+  const handleDeleteArticle = async () => {
+    await fetch(`api/article/${article[0].writer}/${article[0]._id}`, {
+      method: "DELETE",
+    });
+  };
   if (slugs.length === 1 && article.length > 0) {
     return (
       <div className="flex flex-col justify-center py-24 items-center w-full">
@@ -111,7 +119,11 @@ function Post({
                     >
                       수정
                     </a>
-                    <button type="button" className="mr-1">
+                    <button
+                      type="button"
+                      onClick={() => setisDelete((value) => !value)}
+                      className="mr-1"
+                    >
                       삭제
                     </button>
                   </div>
@@ -152,6 +164,33 @@ function Post({
             </div>
           </div>
         ))}
+        {isDelete && (
+          <div>
+            <div className="bg-[#f9f9f9] z-30 delete_opacity opacity-60" />
+            <div className="delete_post z-40 delete_sd">
+              <div className="flex flex-col mx-6">
+                <h1 className="font-bold text-2xl mb-3 mt-12">포스트 삭제</h1>
+                <p className="mb-16">정말로 삭제하시겠습니까?</p>
+                <div className="flex justify-end mt-12">
+                  <button
+                    onClick={() => setisDelete((value) => !value)}
+                    type="button"
+                    className="text-sky-600 hover:text-sky-700 px-6 py-1.5 mr-4 rounded-md"
+                  >
+                    취소
+                  </button>
+                  <button
+                    onClick={handleDeleteArticle}
+                    type="button"
+                    className="text-white bg-sky-600 hover:bg-sky-700 px-6 py-1.5 rounded-md"
+                  >
+                    확인
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

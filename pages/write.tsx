@@ -209,37 +209,32 @@ function Write({
                 value={content}
               />
             </div>
-            <div className="flex justify-between items-center mt-4">
+            <div className="flex justify-end items-center mt-12 mr-4">
               <Link href="/">
-                <button type="button" className="text-xl font-bold">
-                  뒤로 가기
-                </button>
-              </Link>
-              <div className="my-2">
                 <button
                   type="button"
                   className="text-sky-500 hover:text-sky-400 rounded text-lg mx-1 px-5 font-bold"
                 >
-                  임시버튼
+                  뒤로가기
                 </button>
-                {data ? (
-                  <button
-                    type="button"
-                    onClick={handleSubmitArticle}
-                    className="bg-sky-500 hover:bg-sky-400 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
-                  >
-                    수정하기
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleSubmitArticle}
-                    className="bg-sky-500 hover:bg-sky-400 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
-                  >
-                    출간하기
-                  </button>
-                )}
-              </div>
+              </Link>
+              {data ? (
+                <button
+                  type="button"
+                  onClick={handleSubmitArticle}
+                  className="bg-sky-500 hover:bg-sky-400 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
+                >
+                  수정하기
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleSubmitArticle}
+                  className="bg-sky-500 hover:bg-sky-400 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
+                >
+                  출간하기
+                </button>
+              )}
             </div>
           </form>
         </div>
