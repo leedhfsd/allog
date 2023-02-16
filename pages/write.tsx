@@ -8,8 +8,14 @@ import {
 } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { Article } from "../interfaces";
 
-export default function Write() {
+function Write({
+  data,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [option, setOption] = useState(false);
@@ -20,6 +26,7 @@ export default function Write() {
   const tagRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
   const router = useRouter();
+
   const redirect = async () => {
     await router.push("/");
   };
@@ -76,33 +83,51 @@ export default function Write() {
     const kst = new Date(utc + 9 * 60 * 60 * 1000);
     const postData = async () => {
       if (session?.user) {
-        let slug = title
+        let url = title
           .replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>{}[\]\\/]/gim, "")
           .replace(/\n/gim, " ")
           .split(" ")
           .join("-")
           .trim();
-        if (!slug) {
-          slug = `${curDate.getTime()}`;
+        if (!url) {
+          url = `${curDate.getTime()}`;
         }
-        const formData = {
-          title,
-          content,
-          hashtag: tag,
-          createdAt: `${kst.getFullYear()}년 ${
-            kst.getMonth() + 1
-          }월 ${kst.getDate()}일`,
-          writer: session.user.email,
-          profile: session.user.image,
-          slug,
-        };
-        await fetch("/api/write", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
+        if (!data) {
+          const formData = {
+            title,
+            content,
+            hashtag: tag,
+            createdAt: `${kst.getFullYear()}년 ${
+              kst.getMonth() + 1
+            }월 ${kst.getDate()}일`,
+            writer: session.user.email,
+            profile: session.user.image,
+            slug: url,
+          };
+          await fetch("/api/write", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+        } else {
+          const article = data[0] as Article;
+          const formData = {
+            _id: article._id,
+            title,
+            content,
+            hashtag: tag,
+            slug: url,
+          };
+          await fetch("/api/write", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+        }
       }
     };
     postData()
@@ -111,7 +136,14 @@ export default function Write() {
         throw err;
       });
   };
-
+  useEffect(() => {
+    if (data) {
+      const article = data[0] as Article;
+      setTitle(article.title);
+      setTag(article.hashtag);
+      setContent(article.content);
+    }
+  }, [data]);
   useEffect(() => {
     if (option) document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -186,17 +218,27 @@ export default function Write() {
               <div className="my-2">
                 <button
                   type="button"
-                  className="text-sky-500 rounded text-lg mx-1 px-5 font-bold"
+                  className="text-sky-500 hover:text-sky-400 rounded text-lg mx-1 px-5 font-bold"
                 >
                   임시버튼
                 </button>
-                <button
-                  type="button"
-                  onClick={handleSubmitArticle}
-                  className="bg-sky-500 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
-                >
-                  출간하기
-                </button>
+                {data ? (
+                  <button
+                    type="button"
+                    onClick={handleSubmitArticle}
+                    className="bg-sky-500 hover:bg-sky-400 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
+                  >
+                    수정하기
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSubmitArticle}
+                    className="bg-sky-500 hover:bg-sky-400 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
+                  >
+                    출간하기
+                  </button>
+                )}
               </div>
             </div>
           </form>
@@ -213,3 +255,28 @@ export default function Write() {
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { user, id } = context.query;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const session = await getServerSession(context.req, context.res, authOptions);
+  if (
+    typeof user === "string" &&
+    typeof id === "string" &&
+    session &&
+    session.user?.name === user
+  ) {
+    const res = await fetch(
+      `${process.env.BASE_URL}/api/article/${user}/${id}`,
+    );
+    const data = (await res.json()) as Article[];
+    return {
+      props: { data },
+    };
+  }
+  return {
+    props: {},
+  };
+};
+
+export default Write;

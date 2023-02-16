@@ -1,16 +1,30 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Article } from "../../interfaces";
+
+interface User {
+  name: string;
+  email: string;
+  image: string;
+}
 
 function Post({
   data,
   slug,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [article, setArticle] = useState<Article[]>([]);
+  const [user, setUser] = useState("");
+  const { data: session } = useSession();
+
   useEffect(() => {
+    if (session && session.user) {
+      const curUser = session.user as User;
+      setUser(curUser.name);
+    }
     setArticle(data as Article[]);
-  }, [data, slug]);
+  }, [data, slug, session]);
   const slugs = slug as string[];
   if (slugs.length === 1 && article.length > 0) {
     return (
@@ -85,7 +99,25 @@ function Post({
                 <span className="mx-2">·</span>
                 <span className="text-gray-500">{post.createdAt}</span>
               </div>
-              <span>❤ {post.liked}</span>
+              <div className="flex flex-row">
+                {session && user === slugs[0].substring(1) && (
+                  <div className="text-gray-400">
+                    <a
+                      href={`/write?user=${slugs[0].substring(1)}&id=${
+                        slugs[1]
+                      }`}
+                      type="button"
+                      className="mx-1"
+                    >
+                      수정
+                    </a>
+                    <button type="button" className="mr-1">
+                      삭제
+                    </button>
+                  </div>
+                )}
+                <span>❤ {post.liked}</span>
+              </div>
             </div>
             <div>
               {post.hashtag.map((item) => {
@@ -104,14 +136,19 @@ function Post({
               {post.content}
             </p>
             <div className="flex flex-row items-center my-16">
-              <img
-                className="rounded-full mr-4"
-                src={post.profile}
-                width={128}
-                height={127}
-                alt="user-profile"
-              />
-              <div className="text-xl font-bold">{slugs[0]}</div>
+              <a
+                href={`/article/${slugs[0]}`}
+                className="flex flex-row items-center"
+              >
+                <img
+                  className="rounded-full mr-4"
+                  src={post.profile}
+                  width={128}
+                  height={127}
+                  alt="user-profile"
+                />
+                <div className="text-xl font-bold">{slugs[0]}</div>
+              </a>
             </div>
           </div>
         ))}
