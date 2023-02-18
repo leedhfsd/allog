@@ -259,7 +259,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     typeof user === "string" &&
     typeof id === "string" &&
     session &&
-    session.user?.name === user
+    session.user?.email.split("@")[0] === user
   ) {
     const res = await fetch(
       `${process.env.BASE_URL}/api/article/${user}/${id}`,

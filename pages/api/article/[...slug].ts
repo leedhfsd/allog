@@ -2,6 +2,7 @@ import type { WithId, Document } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import clientPromise from "../../../lib/db/db";
+import { authOptions } from "../auth/[...nextauth]";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,8 +21,12 @@ export default async function handler(
         .sort({ _id: -1 })
         .toArray();
       data = fetchData;
+      if (data.length > 0) {
+        return res.status(200).send(data);
+      }
+      return res.status(404).send("404 Not Found");
     } catch (err) {
-      res.status(500).json({ error: "Failed to fetch data" });
+      return res.status(500).json({ error: "Failed to fetch data" });
     }
   } else if (slug && slug.length >= 2) {
     if (req.method === "GET") {
@@ -33,27 +38,33 @@ export default async function handler(
           .sort({ _id: -1 })
           .toArray();
         data = fetchData;
+        if (data.length > 0) {
+          return res.status(200).send(data);
+        }
+        return res.status(404).send("404 Not Found");
       } catch (err) {
-        res.status(500).json({ error: "Failed to fetch data" });
+        return res.status(500).json({ error: "Failed to fetch data" });
       }
     } else if (req.method === "DELETE") {
+      const session = await getServerSession(req, res, authOptions);
+      if (!session) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      const writer = decodeURIComponent(slug[0]);
+      const articleId = parseInt(slug[1], 10);
+      if (writer !== slug[0]) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
       try {
-        const writer = decodeURIComponent(slug[0]);
-        const articleId = parseInt(slug[1], 10);
         await articleCollection.deleteOne({
           _id: articleId,
           writer,
         });
-        res.status(200).send("Delete Completed");
+        return res.status(200).send("Delete Completed");
       } catch (err) {
-        res.status(500).json({ error: "Failed to Delete data" });
+        return res.status(500).json({ error: "Failed to Delete data" });
       }
     }
   }
-
-  if (data.length > 0) {
-    res.status(200).send(data);
-  } else {
-    res.status(404).send("404 Not Found");
-  }
+  return res.status(500).json({ error: "Error" });
 }

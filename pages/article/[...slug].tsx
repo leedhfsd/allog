@@ -20,20 +20,24 @@ function Post({
   const [isDelete, setisDelete] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
+  const redirect = async () => {
+    await router.push("/");
+  };
 
   useEffect(() => {
     if (session && session.user) {
       const curUser = session.user as User;
-      setUser(curUser.name);
+      setUser(curUser.email.split("@")[0]);
     }
     setArticle(data as Article[]);
   }, [data, slug, session]);
   const slugs = slug as string[];
   const handleDeleteArticle = async () => {
-    await fetch(`api/article/${article[0].writer}/${article[0]._id}`, {
+    await fetch(`/api/article/${article[0].writer}/${article[0]._id}`, {
       method: "DELETE",
-    });
+    }).then(() => redirect());
   };
+
   if (slugs.length === 1 && article.length > 0) {
     return (
       <div className="flex flex-col justify-center py-24 items-center w-full">
