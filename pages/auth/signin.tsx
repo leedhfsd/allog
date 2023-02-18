@@ -4,6 +4,11 @@ import { useState } from "react";
 export default function Sign() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const handleLogin = (provider: string) => {
+    signIn(provider, { callbackUrl: "/" }).catch(() => {
+      throw new Error();
+    });
+  };
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="md:w-[520px] h-[768px] my-10">
@@ -45,7 +50,7 @@ export default function Sign() {
           <button
             type="button"
             className="flex items-center bg-[#1d5e87] mx-32 rounded-lg my-1"
-            onClick={() => signIn("github", { callbackUrl: "/" })}
+            onClick={() => handleLogin("github")}
           >
             <span className="flex justify-center items-center bg-[#123456] w-10 h-10  rounded-tl-lg rounded-bl-lg">
               <svg height="24" viewBox="0 0 16 16" width="40">
@@ -62,7 +67,7 @@ export default function Sign() {
           <button
             type="button"
             className="flex items-center bg-[#DB4437] mx-32 rounded-lg"
-            onClick={() => signIn("google", { callbackUrl: "/" })}
+            onClick={() => handleLogin("google")}
           >
             <span className="flex justify-center items-center bg-red-700 w-10 h-10 rounded-tl-lg rounded-bl-lg">
               <svg width="20" height="20" fill="none" viewBox="0 0 20 20">

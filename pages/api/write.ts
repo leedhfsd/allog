@@ -27,41 +27,57 @@ const getNextSequence = async (name: string) => {
   return undefined;
 };
 
+async function postData(req: NextApiRequest, res: NextApiResponse) {
+  const client = await clientPromise;
+  const db = client.db();
+  const articleCollection = db.collection("articleDB");
+  const formData = req.body as Article;
+  const article = {
+    _id: (await getNextSequence("articleId")) as ObjectId,
+    title: formData.title,
+    content: formData.content,
+    hashtag: formData.hashtag,
+    createdAt: formData.createdAt,
+    liked: 0,
+    writer: formData.writer.split("@")[0],
+    profile: formData.profile,
+    slug: formData.slug,
+  };
+  try {
+    await articleCollection.insertOne(article);
+    return res.status(201).send("Post Completed");
+  } catch (err) {
+    return res.status(500).send({ error: "failed to fetch data" });
+  }
+}
+
+async function patchData(req: NextApiRequest, res: NextApiResponse) {
+  const client = await clientPromise;
+  const db = client.db();
+  const articleCollection = db.collection("articleDB");
+  const formData = req.body as PatchArticle;
+  const update = { $set: formData };
+  const query = { _id: formData._id };
+  try {
+    await articleCollection.updateOne(query, update);
+    return res.status(200).send("Patch Compledted");
+  } catch (err) {
+    return res.status(500).send({ error: "failed to patch data" });
+  }
+}
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const client = await clientPromise;
-  const db = client.db();
-  const articleCollection = db.collection("articleDB");
-  if (req.method === "POST") {
-    const formData = req.body as Article;
-    const article = {
-      _id: (await getNextSequence("articleId")) as ObjectId,
-      title: formData.title,
-      content: formData.content,
-      hashtag: formData.hashtag,
-      createdAt: formData.createdAt,
-      liked: 0,
-      writer: formData.writer.split("@")[0],
-      profile: formData.profile,
-      slug: formData.slug,
-    };
-    try {
-      await articleCollection.insertOne(article);
-      res.status(201).send("Post Completed");
-    } catch (err) {
-      res.status(500).send({ error: "failed to fetch data" });
-    }
-  } else if (req.method === "PATCH") {
-    const formData = req.body as PatchArticle;
-    const update = { $set: formData };
-    const query = { _id: formData._id };
-    try {
-      await articleCollection.updateOne(query, update);
-      res.status(200).send("Patch Compledted");
-    } catch (err) {
-      res.status(500).send({ error: "failed to patch data" });
-    }
+  switch (req.method) {
+    case "POST":
+      await postData(req, res);
+      break;
+    case "PATCH":
+      await patchData(req, res);
+      break;
+    default:
+      return res.status(405).send({ error: "Not allowed request method" });
   }
+  return undefined;
 }
