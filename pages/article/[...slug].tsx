@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import "prismjs/themes/prism.css";
 import { Article } from "../../interfaces";
 
 interface User {
@@ -31,6 +32,14 @@ function Post({
     }
     setArticle(data as Article[]);
   }, [data, slug, session]);
+
+  useEffect(() => {
+    const markdownDiv = document.getElementById("markdown") as HTMLDivElement;
+    if (article.length === 1 && article[0].sanitizedHtml) {
+      markdownDiv.innerHTML = article[0].sanitizedHtml;
+    }
+  }, [article]);
+
   const slugs = slug as string[];
   const handleDeleteArticle = async () => {
     await fetch(`/api/article/${article[0].writer}/${article[0]._id}`, {
@@ -149,10 +158,14 @@ function Post({
               })}
             </div>
             <p className="whitespace-pre-wrap mt-16 min-h-[328px]">
-              {post.content}
+              {article[0].sanitizedHtml ? (
+                <div id="markdown" />
+              ) : (
+                <div>{article[0].content}</div>
+              )}
             </p>
             <div className="flex flex-row items-center my-16">
-              <a
+              <Link
                 href={`/article/${slugs[0]}`}
                 className="flex flex-row items-center"
               >
@@ -164,7 +177,7 @@ function Post({
                   alt="user-profile"
                 />
                 <div className="text-xl font-bold">{slugs[0]}</div>
-              </a>
+              </Link>
             </div>
           </div>
         ))}

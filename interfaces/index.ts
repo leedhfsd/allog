@@ -8,4 +8,5 @@ export type Article = {
   writer: string;
   profile: string;
   slug: string;
+  sanitizedHtml: string;
 };

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export default function Header() {
   const { data: session } = useSession();
   const [isCheck, setCheck] = useState(false);
+  const listRef = useRef<HTMLUListElement>(null);
   const loginHandler = () => {
     signIn().catch(() => {
       throw new Error("Login Failed...");
@@ -15,6 +16,18 @@ export default function Header() {
       throw new Error("Logout Failed...");
     });
   };
+  const handleClickOutside = (e: Event) => {
+    const target = e.target as HTMLElement;
+    if (isCheck && !listRef.current?.contains(target)) {
+      setCheck(false);
+    }
+  };
+  useEffect(() => {
+    if (isCheck) document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
 
   return (
     <header>
@@ -84,10 +97,20 @@ export default function Header() {
               )}
             </div>
           )}
-          {isCheck && (
+          {isCheck && session && (
             <div className="hidden md:block absolute border-black bg-white z-10 w-48 rounded-lg sd mt-12">
-              <ul className="text-base border-black cursor-pointer">
-                <li className="py-3 px-4 hover:text-sky-500">내 블로그</li>
+              <ul
+                className="text-base border-black cursor-pointer"
+                ref={listRef}
+              >
+                <Link href={`/article/@${session.user.email.split("@")[0]}`}>
+                  <li
+                    aria-hidden="true"
+                    className="py-3 px-4 hover:text-sky-500"
+                  >
+                    내 블로그
+                  </li>
+                </Link>
                 <li className="md:hidden py-3 px-4 hover:text-sky-500">
                   새 글 작성
                 </li>

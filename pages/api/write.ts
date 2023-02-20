@@ -9,6 +9,7 @@ type PatchArticle = {
   content: string;
   hashtag: string[];
   slug: string[];
+  sanitizedHtml: string;
 };
 
 const getNextSequence = async (name: string) => {
@@ -24,7 +25,7 @@ const getNextSequence = async (name: string) => {
   if (result.value) {
     return result.value.seq as unknown as ObjectId;
   }
-  return undefined;
+  return null;
 };
 
 async function postData(req: NextApiRequest, res: NextApiResponse) {
@@ -42,6 +43,7 @@ async function postData(req: NextApiRequest, res: NextApiResponse) {
     writer: formData.writer.split("@")[0],
     profile: formData.profile,
     slug: formData.slug,
+    sanitizedHtml: formData.sanitizedHtml,
   };
   try {
     await articleCollection.insertOne(article);
@@ -79,5 +81,5 @@ export default async function handler(
     default:
       return res.status(405).send({ error: "Not allowed request method" });
   }
-  return undefined;
+  return null;
 }

@@ -10,8 +10,12 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
+import prism from "prismjs";
+import "../components/marked-prism";
 import { Article } from "../interfaces";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 function Write({
   data,
@@ -22,11 +26,20 @@ function Write({
   const [tag, setTag] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [fail, setFail] = useState(false);
+  const [markdown, setMarkdown] = useState("");
   const textRef = useRef<HTMLTextAreaElement>(null);
   const tagRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
   const router = useRouter();
 
+  marked.setOptions({
+    highlight: (code, lang) => {
+      if (prism.languages[lang]) {
+        return prism.highlight(code, prism.languages[lang], lang);
+      }
+      return code;
+    },
+  });
   const redirect = async () => {
     await router.push("/");
   };
@@ -41,6 +54,7 @@ function Write({
   const onChangeContent = (e: SyntheticEvent) => {
     const target = e.target as HTMLTextAreaElement;
     setContent(target.value);
+    setMarkdown(marked.parse(target.value));
   };
   const onMouseDownOption = () => setOption((value) => !value);
   const handleClickOutside = (e: Event) => {
@@ -103,6 +117,7 @@ function Write({
             writer: session.user.email,
             profile: session.user.image,
             slug: url,
+            sanitizedHtml: markdown,
           };
           await fetch("/api/write", {
             method: "POST",
@@ -119,6 +134,7 @@ function Write({
             content,
             hashtag: tag,
             slug: url,
+            sanitizedHtml: markdown,
           };
           await fetch("/api/write", {
             method: "PATCH",
@@ -142,6 +158,7 @@ function Write({
       setTitle(article.title);
       setTag(article.hashtag);
       setContent(article.content);
+      setMarkdown(article.sanitizedHtml);
     }
   }, [data]);
   useEffect(() => {
@@ -150,7 +167,12 @@ function Write({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   });
-
+  useEffect(() => {
+    const markdownDiv = document.getElementById("markdown-preview");
+    if (markdownDiv) {
+      markdownDiv.innerHTML = DOMPurify.sanitize(markdown);
+    }
+  }, [markdown]);
   return (
     <div className="flex h-screen mx-16 lg:mx-24 py-4">
       <div className="flex flex-col w-full lg:w-1/2">
@@ -244,8 +266,8 @@ function Write({
           <p>포스트에 실패하였습니다. 로그인과 제목 입력은 필수입니다.</p>
         </div>
       )}
-      <div className="hidden lg:block lg:w-1/2">
-        <p>마크다운 영역</p>
+      <div className="mt-16 lg:block lg:w-1/2">
+        <div className="whitespace-pre-wrap" id="markdown-preview" />
       </div>
     </div>
   );

@@ -107,5 +107,5 @@ export default async function handler(
     default:
       return res.status(405).send({ error: "Not allowed request method" });
   }
-  return undefined;
+  return null;
 }
