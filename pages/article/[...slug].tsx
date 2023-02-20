@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import "prismjs/themes/prism.css";
+import "github-markdown-css";
 import { Article } from "../../interfaces";
 
 interface User {
@@ -159,7 +160,7 @@ function Post({
             </div>
             <p className="whitespace-pre-wrap mt-16 min-h-[328px]">
               {article[0].sanitizedHtml ? (
-                <div id="markdown" />
+                <div id="markdown" className="markdown-body" />
               ) : (
                 <div>{article[0].content}</div>
               )}

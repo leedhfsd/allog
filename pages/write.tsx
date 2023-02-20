@@ -14,6 +14,7 @@ import { marked } from "marked";
 import DOMPurify from "dompurify";
 import prism from "prismjs";
 import "../components/marked-prism";
+import "github-markdown-css";
 import { Article } from "../interfaces";
 import { authOptions } from "./api/auth/[...nextauth]";
 
@@ -267,7 +268,10 @@ function Write({
         </div>
       )}
       <div className="mt-16 lg:block lg:w-1/2">
-        <div className="whitespace-pre-wrap" id="markdown-preview" />
+        <div
+          className="whitespace-pre-wrap markdown-body"
+          id="markdown-preview"
+        />
       </div>
     </div>
   );
