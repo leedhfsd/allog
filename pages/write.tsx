@@ -18,6 +18,11 @@ import "github-markdown-css";
 import { Article } from "../interfaces";
 import { authOptions } from "./api/auth/[...nextauth]";
 
+interface Certificate {
+  name: string;
+  email: string;
+  img: string | undefined;
+}
 function Write({
   data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -32,7 +37,6 @@ function Write({
   const tagRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
   const router = useRouter();
-
   marked.setOptions({
     highlight: (code, lang) => {
       if (prism.languages[lang]) {
@@ -127,7 +131,7 @@ function Write({
             },
             body: JSON.stringify(formData),
           });
-        } else {
+        } else if (data && Array.isArray(data)) {
           const article = data[0] as Article;
           const formData = {
             _id: article._id,
@@ -154,7 +158,7 @@ function Write({
       });
   };
   useEffect(() => {
-    if (data) {
+    if (data && Array.isArray(data)) {
       const article = data[0] as Article;
       setTitle(article.title);
       setTag(article.hashtag);
@@ -267,7 +271,7 @@ function Write({
           <p>포스트에 실패하였습니다. 로그인과 제목 입력은 필수입니다.</p>
         </div>
       )}
-      <div className="mt-16 lg:block lg:w-1/2">
+      <div className="hidden mt-16 lg:block lg:w-1/2">
         <div
           className="whitespace-pre-wrap markdown-body"
           id="markdown-preview"
@@ -279,13 +283,13 @@ function Write({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { user, id } = context.query;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const session = await getServerSession(context.req, context.res, authOptions);
+  const curUser = session?.user as Certificate;
   if (
     typeof user === "string" &&
     typeof id === "string" &&
     session &&
-    session.user?.email.split("@")[0] === user
+    curUser.email.split("@")[0] === user
   ) {
     const res = await fetch(
       `${process.env.BASE_URL}/api/article/${user}/${id}`,

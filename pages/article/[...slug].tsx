@@ -51,7 +51,7 @@ function Post({
   if (slugs.length === 1 && article.length > 0) {
     return (
       <div className="flex flex-col justify-center py-24 items-center w-full">
-        <div>
+        <div className="flex flex-col items-center">
           <div className="flex flex-row items-center mb-8">
             <img
               className="rounded-full mr-6"
@@ -69,7 +69,7 @@ function Post({
             <hr className="border-b-2 my-4 border-sky-700 w-full" />
           </div>
           {article.map((post) => (
-            <div className="my-16" key={post._id}>
+            <div className="my-16 w-[400px]" key={post._id}>
               <Link href={`/article/@${post.writer}/${post._id}/${post.slug}`}>
                 <img
                   alt="sample"
@@ -158,13 +158,13 @@ function Post({
                 );
               })}
             </div>
-            <p className="whitespace-pre-wrap mt-16 min-h-[328px]">
+            <div className="whitespace-pre-wrap mt-16 min-h-[328px]">
               {article[0].sanitizedHtml ? (
                 <div id="markdown" className="markdown-body" />
               ) : (
                 <div>{article[0].content}</div>
               )}
-            </p>
+            </div>
             <div className="flex flex-row items-center my-16">
               <Link
                 href={`/article/${slugs[0]}`}
@@ -184,8 +184,8 @@ function Post({
         ))}
         {isDelete && (
           <div>
-            <div className="bg-[#f9f9f9] z-30 delete_opacity opacity-60" />
-            <div className="delete_post z-40 delete_sd">
+            <div className="bg-[#f9f9f9] z-40 delete_opacity opacity-95" />
+            <div className="delete_post z-50 delete_sd">
               <div className="flex flex-col mx-6">
                 <h1 className="font-bold text-2xl mb-3 mt-12">포스트 삭제</h1>
                 <p className="mb-16">정말로 삭제하시겠습니까?</p>

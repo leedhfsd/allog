@@ -21,5 +21,9 @@ module.exports = {
     "react/jsx-filename-extension": [1, { extensions: [".ts", ".tsx"] }],
     "react/jsx-props-no-spreading": ["off"],
     "no-underscore-dangle": ["error", { allow: ["_id"] }],
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      { checksVoidReturn: { attributes: false } },
+    ],
   },
 };

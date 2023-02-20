@@ -5,6 +5,7 @@ import { useRef, useState, useEffect } from "react";
 export default function Header() {
   const { data: session } = useSession();
   const [isCheck, setCheck] = useState(false);
+  const [user, setUser] = useState("");
   const listRef = useRef<HTMLUListElement>(null);
   const loginHandler = () => {
     signIn().catch(() => {
@@ -28,6 +29,11 @@ export default function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   });
+  useEffect(() => {
+    if (session && session.user && session.user.email) {
+      setUser(session.user.email.split("@")[0]);
+    }
+  }, [session]);
 
   return (
     <header>
@@ -43,7 +49,6 @@ export default function Header() {
               <path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z" />
             </svg>
           </Link>
-          {/* 로그인 시 비활성화 */}
           {!session && (
             <div className="flex items-center">
               <button
@@ -55,7 +60,6 @@ export default function Header() {
               </button>
             </div>
           )}
-          {/* 로그인 시 활성화 */}
           {session?.user && (
             <div className="flex items-center">
               <Link
@@ -103,7 +107,7 @@ export default function Header() {
                 className="text-base border-black cursor-pointer"
                 ref={listRef}
               >
-                <Link href={`/article/@${session.user.email.split("@")[0]}`}>
+                <Link href={`/article/@${user}`}>
                   <li
                     aria-hidden="true"
                     className="py-3 px-4 hover:text-sky-500"
