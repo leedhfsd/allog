@@ -229,14 +229,14 @@ function Write({
               )}
               <textarea
                 className="focus:outline-none resize-none text-lg w-full"
-                rows={24}
+                rows={22}
                 name="content"
                 placeholder="내용을 입력하세요"
                 onChange={onChangeContent}
                 value={content}
               />
             </div>
-            <div className="flex justify-end items-center mt-12 mr-4">
+            <div className="flex justify-end items-center mt-4 mb-2">
               <Link href="/">
                 <button
                   type="button"

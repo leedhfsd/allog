@@ -1,9 +1,16 @@
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { SyntheticEvent, useState } from "react";
 
 export default function Sign() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const loginByEmail = async (e) => {
+    e.preventDefault();
+    const res = await signIn("email-password", {
+      email,
+      password,
+    });
+  };
   const handleLogin = (provider: string) => {
     signIn(provider, { callbackUrl: "/" }).catch(() => {
       throw new Error();
@@ -11,45 +18,45 @@ export default function Sign() {
   };
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="md:w-[520px] h-[768px] my-10">
+      <div className="w-[300px] h-[768px] my-10">
         <div className="text-3xl font-bold text-center my-16">
-          Welcome to Allog
+          Allog에 어서오세요!
         </div>
-        <form className="flex flex-col text-sm text-gray-500 mx-32">
+        <form onSubmit={loginByEmail} className="flex flex-col text-sm ">
           <input
             className="outline-blue-500 py-3 my-1.5"
-            id="user-email"
+            id="email"
             type="email"
-            placeholder="Your Email"
+            placeholder="이메일을 입력해 주세요"
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
             className="outline-blue-500  py-3"
             type="password"
-            id="user-password"
-            placeholder="Your password"
+            id="password"
+            placeholder="비밀번호를 입력해 주세요"
             onChange={(e) => setPassword(e.target.value)}
           />
           <button
             className=" bg-sky-600 py-2 text-white rounded-lg text-sm mt-8 mb-2"
             type="submit"
           >
-            LOGIN
+            로그인
           </button>
         </form>
-        <div className="flex text-xs justify-between mx-32 text-[#888]">
+        <div className="flex text-xs justify-between text-[#888]">
           <a href="/register" className="hover:text-black">
-            Register now
+            회원가입
           </a>
           <a href="/find_password" className="hover:text-black">
-            Forgot password?
+            비밀번호 찾기
           </a>
         </div>
-        <div className="text-center my-6 text-[#888]">Or</div>
+        <div className="text-center my-4 text-[#888]">또는</div>
         <div className="flex flex-col">
           <button
             type="button"
-            className="flex items-center bg-[#1d5e87] mx-32 rounded-lg my-1"
+            className="flex items-center bg-[#1d5e87] rounded-lg my-1"
             onClick={() => handleLogin("github")}
           >
             <span className="flex justify-center items-center bg-[#123456] w-10 h-10  rounded-tl-lg rounded-bl-lg">
@@ -61,12 +68,12 @@ export default function Sign() {
               </svg>
             </span>
             <span className="text-white text-xs md:text-sm ml-10">
-              LOGIN WITH GITHUB
+              GITHUB으로 로그인하기
             </span>
           </button>
           <button
             type="button"
-            className="flex items-center bg-[#DB4437] mx-32 rounded-lg"
+            className="flex items-center bg-[#DB4437] rounded-lg"
             onClick={() => handleLogin("google")}
           >
             <span className="flex justify-center items-center bg-red-700 w-10 h-10 rounded-tl-lg rounded-bl-lg">
@@ -90,7 +97,7 @@ export default function Sign() {
               </svg>
             </span>
             <span className="text-white text-xs md:text-sm ml-10">
-              LOGIN WITH GOOGLE
+              GOOGLE로 로그인하기
             </span>
           </button>
         </div>

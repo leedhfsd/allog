@@ -25,5 +25,6 @@ module.exports = {
       "error",
       { checksVoidReturn: { attributes: false } },
     ],
+    "jsx-a11y/label-has-associated-control": "off",
   },
 };
