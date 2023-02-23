@@ -63,6 +63,7 @@ async function deleteArticle(
   const database = client.db();
   const articleCollection = database.collection("articleDB");
   const session = await getServerSession(req, res, authOptions);
+
   if (!session) {
     return res.status(401).send({ error: "Unauthorized" });
   }

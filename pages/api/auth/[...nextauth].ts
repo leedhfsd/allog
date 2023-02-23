@@ -3,8 +3,8 @@ import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+import { isValidPassword } from "../../../lib/validation";
 import clientPromise from "../../../lib/db/db";
-import { NextApiRequest } from "next";
 
 export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise),
@@ -21,22 +21,41 @@ export const authOptions: NextAuthOptions = {
       id: "email-password",
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: "email", type: "email" },
+        password: { label: "password", type: "password" },
       },
-      async authorize(credentials, req: NextApiRequest) {
-        const email = credentials.email;
+      async authorize(credentials, req) {
+        const enteredEmail = credentials.email;
         const password = credentials.password;
-        if (email === "test@test.com" && password === "test") {
-          return { email };
+        const client = await clientPromise;
+        const database = client.db();
+        const usersCollection = database.collection("users");
+        const user = await usersCollection.findOne({ email: enteredEmail });
+
+        if (!user) {
+          throw new Error("Not registered");
+        } else {
+          const { _id, name, email, image, hashedPassword, salt } = user;
+          if (isValidPassword(password, hashedPassword, salt)) {
+            return { id: _id, name, email, image };
+          }
+          return null;
         }
-        throw new Error("아이디 혹은 패스워드가 틀립니다.");
       },
     }),
   ],
   pages: {
     signIn: "/auth/signin",
-    error: "/auth/error",
+  },
+  session: {
+    strategy: "jwt",
+    maxAge: 24 * 60 * 60,
+    updateAge: 2 * 24 * 60 * 60,
+  },
+  callbacks: {
+    async session({ session }) {
+      return session;
+    },
   },
 };
 

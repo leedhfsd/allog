@@ -11,5 +11,6 @@ declare namespace NodeJS {
     EMAIL_SERVER_HOST: string;
     EMAIL_SERVER_PORT: number;
     EMAIL_FROM: string;
+    NEXTAUTH_SECRET: string;
   }
 }

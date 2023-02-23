@@ -1,12 +1,78 @@
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { SyntheticEvent, useEffect, useRef, useState } from "react";
+import { User } from "../interfaces";
+import { validationPassword } from "../lib/validation";
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setconfirmPassword] = useState("");
   const [isValidPassword, setIsValidPassword] = useState(false);
+  const [option, setOption] = useState(true);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const redirect = async () => {
+    await router.push("/auth/welcome");
+  };
 
-  const onChangeEmail = () => {};
-  const onChangePassword = () => {};
+  const onChangeEmail = (e: SyntheticEvent) => {
+    const target = e.target as HTMLInputElement;
+    setEmail(target.value);
+  };
+  const onChangePassword = (e: SyntheticEvent) => {
+    const target = e.target as HTMLInputElement;
+    setPassword(target.value);
+  };
+  const onChangeconfirmPassword = (e: SyntheticEvent) => {
+    const target = e.target as HTMLInputElement;
+    setconfirmPassword(target.value);
+  };
+  const onClickPassword = () => {
+    setOption(true);
+  };
+  const onSubmitForm = (e: SyntheticEvent) => {
+    e.preventDefault();
+    const postUser = async () => {
+      const formData: User = {
+        name: email.split("@")[0],
+        email,
+        password,
+        image:
+          "https://www.shareicon.net/data/128x128/2015/10/04/112008_people_512x512.png",
+        emailVerified: true,
+      };
+      await fetch("/api/auth/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+    };
+    postUser()
+      .then(() => redirect())
+      .catch((err) => {
+        throw err;
+      });
+  };
+
+  const handleClickOutside = (e: Event) => {
+    const target = e.target as HTMLElement;
+    if (option && !passwordRef.current?.contains(target)) {
+      setOption(false);
+    }
+  };
+  useEffect(() => {
+    if (option) document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
+  useEffect(() => {
+    if (!option) {
+      setIsValidPassword(validationPassword(password));
+    }
+  }, [option, password]);
   return (
     <div>
       <div className="flex flex-col items-center justify-center">
@@ -14,10 +80,8 @@ export default function Register() {
           <div className="text-3xl font-bold text-center my-16">
             Allog 회원가입
           </div>
-          <form className="flex flex-col text-sm">
-            <label htmlFor="email" className="flex flex-col">
-              이메일
-            </label>
+          <form onSubmit={onSubmitForm} className="flex flex-col text-sm">
+            <label htmlFor="email">이메일</label>
             <input
               className="outline-blue-500 py-3 mt-1 mb-4"
               id="email"
@@ -25,15 +89,15 @@ export default function Register() {
               placeholder="이메일을 입력해 주세요"
               onChange={onChangeEmail}
             />
-            <label htmlFor="password" className="flex flex-col">
-              비밀번호
-            </label>
+            <label htmlFor="password">비밀번호</label>
             {isValidPassword ? (
               <input
-                className="outline-blue-500 py-3 mt-1"
+                className="outline-blue-500 py-3 mt-1 mb-4"
                 type="password"
                 id="password"
                 placeholder="비밀번호를 입력해 주세요"
+                ref={passwordRef}
+                onClick={onClickPassword}
                 onChange={onChangePassword}
               />
             ) : (
@@ -42,15 +106,35 @@ export default function Register() {
                 type="password"
                 id="password"
                 placeholder="비밀번호를 입력해 주세요"
+                ref={passwordRef}
+                onClick={onClickPassword}
                 onChange={onChangePassword}
               />
             )}
 
             {!isValidPassword && (
               <div className="text-xs text-red-500 my-1">
-                8~16자 영문 소문자, 숫자, 특수문자를 사용하세요.
+                공백없이 8~16자 영문 대소문자, 숫자, 특수문자를 사용해주세요.
               </div>
             )}
+            <label htmlFor="re-password">비밀번호 재확인</label>
+            <input
+              className="outline-blue-500 py-3 mt-1"
+              type="password"
+              id="re-password"
+              placeholder="동일한 비밀번호를 입력해주세요"
+              onChange={onChangeconfirmPassword}
+            />
+            {confirmPassword &&
+              (password === confirmPassword ? (
+                <div className="text-sky-500 text-xs mt-1">
+                  동일한 비밀번호입니다.
+                </div>
+              ) : (
+                <div className="text-red-500 text-xs mt-1">
+                  동일하지 않은 비밀번호입니다.
+                </div>
+              ))}
             <label htmlFor="verification" className="flex flex-col mt-4">
               인증번호
             </label>
@@ -60,7 +144,6 @@ export default function Register() {
                 type="text"
                 id="verification"
                 placeholder="인증번호"
-                onChange={onChangePassword}
               />
               <button
                 className="text-sky-600 py-2 rounded-lg text-sm"

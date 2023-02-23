@@ -36,7 +36,7 @@ function Post({
 
   useEffect(() => {
     const markdownDiv = document.getElementById("markdown") as HTMLDivElement;
-    if (article.length === 1 && article[0].sanitizedHtml) {
+    if (slugs.length > 1 && article.length === 1 && article[0].sanitizedHtml) {
       markdownDiv.innerHTML = article[0].sanitizedHtml;
     }
   }, [article]);

@@ -10,3 +10,11 @@ export type Article = {
   slug: string;
   sanitizedHtml: string;
 };
+
+export type User = {
+  name: string;
+  email: string;
+  password: string;
+  image: string;
+  emailVerified: boolean | null;
+};
