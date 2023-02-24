@@ -22,6 +22,7 @@ function Post({
   const [isDelete, setisDelete] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
+  const slugs = slug as string[];
   const redirect = async () => {
     await router.push("/");
   };
@@ -39,9 +40,7 @@ function Post({
     if (slugs.length > 1 && article.length === 1 && article[0].sanitizedHtml) {
       markdownDiv.innerHTML = article[0].sanitizedHtml;
     }
-  }, [article]);
-
-  const slugs = slug as string[];
+  }, [slugs.length, article]);
   const handleDeleteArticle = async () => {
     await fetch(`/api/article/${article[0].writer}/${article[0]._id}`, {
       method: "DELETE",

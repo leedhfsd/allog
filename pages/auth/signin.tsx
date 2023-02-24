@@ -1,5 +1,4 @@
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/router";
 import { SyntheticEvent, useState } from "react";
 
 export default function Sign() {
@@ -7,7 +6,7 @@ export default function Sign() {
   const [password, setPassword] = useState("");
   const loginByEmail = async (e: SyntheticEvent) => {
     e.preventDefault();
-    const res = await signIn("email-password", {
+    await signIn("email-password", {
       email,
       password,
       callbackUrl: "/",
