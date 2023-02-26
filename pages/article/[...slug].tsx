@@ -30,7 +30,7 @@ function Post({
   useEffect(() => {
     if (session && session.user) {
       const curUser = session.user as User;
-      setUser(curUser.email.split("@")[0]);
+      setUser(curUser.name);
     }
     setArticle(data as Article[]);
   }, [data, slug, session]);
@@ -42,9 +42,12 @@ function Post({
     }
   }, [slugs.length, article]);
   const handleDeleteArticle = async () => {
-    await fetch(`/api/article/${article[0].writer}/${article[0]._id}`, {
-      method: "DELETE",
-    }).then(() => redirect());
+    await fetch(
+      `/api/article?writer=${article[0].writer}&id=${article[0]._id}`,
+      {
+        method: "DELETE",
+      },
+    ).then(() => redirect());
   };
 
   if (slugs.length === 1 && article.length > 0) {
@@ -218,12 +221,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let id = "";
   let res: Response | undefined;
   if (slug && slug[0]) {
-    writer = slug[0].substring(1);
-    res = await fetch(`${process.env.BASE_URL}/api/article/${writer}`);
+    writer = encodeURIComponent(slug[0].substring(1));
+    res = await fetch(`${process.env.BASE_URL}/api/article?writer=${writer}`);
   }
   if (slug && slug[1]) {
-    [writer, id] = [slug[0].substring(1), slug[1]];
-    res = await fetch(`${process.env.BASE_URL}/api/article/${writer}/${id}`);
+    [writer, id] = [encodeURIComponent(slug[0].substring(1)), slug[1]];
+    res = await fetch(
+      `${process.env.BASE_URL}/api/article?writer=${writer}&id=${id}`,
+    );
   }
   if (res && res.status !== 200) {
     return {

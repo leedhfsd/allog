@@ -5,7 +5,7 @@ import { Article } from "../interfaces";
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function Home() {
   const { data, error, isLoading } = useSwr<Article[], Error>(
-    "api/articles",
+    "api/posts",
     fetcher,
   );
   if (error) return <div>게시글을 불러오는 것을 실패하였습니다.</div>;

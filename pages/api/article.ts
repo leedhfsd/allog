@@ -1,8 +1,8 @@
 import type { WithId, Document } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
-import clientPromise from "../../../lib/db/db";
-import { authOptions } from "../auth/[...nextauth]";
+import clientPromise from "../../lib/db/db";
+import { authOptions } from "./auth/[...nextauth]";
 
 async function getAritcleByWriter(
   req: NextApiRequest,
@@ -32,19 +32,19 @@ async function getAritcleByID(
   req: NextApiRequest,
   res: NextApiResponse,
   writer: string,
-  id: number,
+  id: string,
 ) {
   const client = await clientPromise;
   const database = client.db();
   const articleCollection = database.collection("articleDB");
-  let data: WithId<Document>[] = [];
+  let data = [];
   try {
-    const fetchData = await articleCollection
-      .find({ writer, _id: id })
-      .sort({ _id: -1 })
-      .toArray();
-    data = fetchData;
-    if (data.length > 0) {
+    const fetchData = await articleCollection.findOne({
+      writer,
+      _id: Number(id),
+    });
+    data = [fetchData];
+    if (data && Object.keys(data)) {
       return res.status(200).send(data);
     }
     return res.status(404).send("404 Not Found");
@@ -57,22 +57,21 @@ async function deleteArticle(
   req: NextApiRequest,
   res: NextApiResponse,
   writer: string,
-  id: number,
+  id: string,
 ) {
   const client = await clientPromise;
   const database = client.db();
   const articleCollection = database.collection("articleDB");
   const session = await getServerSession(req, res, authOptions);
-
   if (!session) {
     return res.status(401).send({ error: "Unauthorized" });
   }
-  if (writer !== session.user?.email?.split("@")[0]) {
+  if (writer !== session.user?.name) {
     return res.status(403).send({ error: "Forbidden" });
   }
   try {
     await articleCollection.deleteOne({
-      _id: id,
+      _id: Number(id),
       writer,
     });
     return res.status(200).send("Delete Completed");
@@ -85,23 +84,18 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { slug } = req.query;
+  const { writer, id } = req.query;
 
   switch (req.method) {
     case "GET":
-      if (slug && slug.length === 1) {
-        const writer = decodeURIComponent(slug[0]);
-        await getAritcleByWriter(req, res, writer);
-      } else if (slug && slug.length >= 2) {
-        const writer = decodeURIComponent(slug[0]);
-        const id = parseInt(slug[1], 10);
-        await getAritcleByID(req, res, writer, id);
+      if (typeof writer === "string" && typeof id === "string") {
+        await getAritcleByID(req, res, decodeURIComponent(writer), id);
+      } else if (typeof writer === "string") {
+        await getAritcleByWriter(req, res, decodeURIComponent(writer));
       }
       break;
     case "DELETE":
-      if (slug && slug.length >= 2) {
-        const writer = decodeURIComponent(slug[0]);
-        const id = parseInt(slug[1], 10);
+      if (typeof writer === "string" && typeof id === "string") {
         await deleteArticle(req, res, writer, id);
       }
       break;
