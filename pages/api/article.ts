@@ -66,7 +66,7 @@ async function deleteArticle(
   if (!session) {
     return res.status(401).send({ error: "Unauthorized" });
   }
-  if (writer !== session.user?.name) {
+  if (writer !== session.user?.email?.split("@")[0]) {
     return res.status(403).send({ error: "Forbidden" });
   }
   try {

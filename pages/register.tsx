@@ -6,6 +6,7 @@ import { validationPassword } from "../lib/validation";
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nickname, setNickname] = useState("");
   const [confirmPassword, setconfirmPassword] = useState("");
   const [isValidPassword, setIsValidPassword] = useState(false);
   const [option, setOption] = useState(true);
@@ -18,6 +19,10 @@ export default function Register() {
   const onChangeEmail = (e: SyntheticEvent) => {
     const target = e.target as HTMLInputElement;
     setEmail(target.value);
+  };
+  const onChangeNickname = (e: SyntheticEvent) => {
+    const target = e.target as HTMLInputElement;
+    setNickname(target.value);
   };
   const onChangePassword = (e: SyntheticEvent) => {
     const target = e.target as HTMLInputElement;
@@ -37,6 +42,8 @@ export default function Register() {
         name: email.split("@")[0],
         email,
         password,
+        userinfo: "",
+        nickname,
         image:
           "https://www.shareicon.net/data/128x128/2015/10/04/112008_people_512x512.png",
         emailVerified: true,
@@ -88,6 +95,14 @@ export default function Register() {
               type="email"
               placeholder="이메일을 입력해 주세요"
               onChange={onChangeEmail}
+            />
+            <label htmlFor="nickname">별명</label>
+            <input
+              className="outline-blue-500 py-3 mt-1 mb-4"
+              id="nickname"
+              type="text"
+              placeholder="별명을 입력해주세요"
+              onChange={onChangeNickname}
             />
             <label htmlFor="password">비밀번호</label>
             {isValidPassword ? (

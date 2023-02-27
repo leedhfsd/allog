@@ -16,5 +16,7 @@ export type User = {
   email: string;
   password: string;
   image: string;
+  nickname?: string;
+  userinfo?: string;
   emailVerified: boolean | null;
 };

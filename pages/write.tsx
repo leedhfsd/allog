@@ -119,7 +119,7 @@ function Write({
             createdAt: `${kst.getFullYear()}년 ${
               kst.getMonth() + 1
             }월 ${kst.getDate()}일`,
-            writer: session.user.name,
+            writer: session.user.email?.split("@")[0],
             profile: session.user.image,
             slug: url,
             sanitizedHtml: markdown,
@@ -289,7 +289,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     typeof user === "string" &&
     typeof id === "string" &&
     session &&
-    curUser.name === user
+    curUser.email.split("@")[0] === user
   ) {
     const res = await fetch(
       `${process.env.BASE_URL}/api/article?writer=${user}&id=${id}`,

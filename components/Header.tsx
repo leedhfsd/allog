@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRef, useState, useEffect } from "react";
+import { DefaultSession } from "next-auth";
 
 export default function Header() {
   const { data: session } = useSession();
   const [isCheck, setCheck] = useState(false);
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState<DefaultSession["user"]>();
   const listRef = useRef<HTMLUListElement>(null);
   const loginHandler = () => {
     signIn().catch(() => {
@@ -30,8 +31,9 @@ export default function Header() {
     };
   });
   useEffect(() => {
-    if (session && session.user && session.user.email) {
-      setUser(session.user.email.split("@")[0]);
+    if (session && session.user) {
+      const { name, email, image } = session.user;
+      setUser({ name, email, image });
     }
   }, [session]);
 
@@ -101,13 +103,13 @@ export default function Header() {
               )}
             </div>
           )}
-          {isCheck && session && (
+          {isCheck && user && user.name && (
             <div className="hidden md:block absolute border-black bg-white z-10 w-48 rounded-lg sd mt-12">
               <ul
                 className="text-base border-black cursor-pointer"
                 ref={listRef}
               >
-                <Link href={`/article/@${user}`}>
+                <Link href={`/article/@${user.name}`}>
                   <li
                     aria-hidden="true"
                     className="py-3 px-4 hover:text-sky-500"
@@ -119,7 +121,9 @@ export default function Header() {
                   새 글 작성
                 </li>
                 <li className="py-3 px-4 hover:text-sky-500">즐겨찾기</li>
-                <li className="py-3 px-4 hover:text-sky-500">설정</li>
+                <Link href="/setting">
+                  <li className="py-3 px-4 hover:text-sky-500">설정</li>
+                </Link>
                 <button
                   type="button"
                   onClick={logoutHandler}

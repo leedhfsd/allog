@@ -20,6 +20,7 @@ function Post({
   const [article, setArticle] = useState<Article[]>([]);
   const [user, setUser] = useState("");
   const [isDelete, setisDelete] = useState(false);
+  const [userinfo, setUserinfo] = useState({});
   const { data: session } = useSession();
   const router = useRouter();
   const slugs = slug as string[];
@@ -30,7 +31,7 @@ function Post({
   useEffect(() => {
     if (session && session.user) {
       const curUser = session.user as User;
-      setUser(curUser.name);
+      setUser(curUser.email.split("@")[0]);
     }
     setArticle(data as Article[]);
   }, [data, slug, session]);
