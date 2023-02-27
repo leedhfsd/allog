@@ -12,10 +12,24 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
+      token: {
+        params: {
+          nickname: "",
+          userinfo: "",
+        },
+      },
     }),
     GithubProvider({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
+      allowDangerousEmailAccountLinking: true,
+      token: {
+        params: {
+          nickname: "",
+          userinfo: "",
+        },
+      },
     }),
     CredentialsProvider({
       id: "email-password",
