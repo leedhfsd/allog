@@ -36,7 +36,7 @@ export default function Header() {
       setUser({ name, email, image });
     }
   }, [session]);
-
+  console.log(session);
   return (
     <header>
       <div className="flex justify-between items-center">

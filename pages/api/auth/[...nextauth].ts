@@ -35,9 +35,9 @@ export const authOptions: NextAuthOptions = {
         if (!user) {
           throw new Error("Not registered");
         } else {
-          const { _id, name, email, image, hashedPassword, salt } = user;
+          const { hashedPassword, salt } = user;
           if (isValidPassword(password, hashedPassword, salt)) {
-            return { id: _id, name, email, image };
+            return user;
           }
           return null;
         }
@@ -53,7 +53,18 @@ export const authOptions: NextAuthOptions = {
     updateAge: 2 * 24 * 60 * 60,
   },
   callbacks: {
-    async session({ session }) {
+    jwt({ token, user }) {
+      if (user) {
+        token.nickname = user.nickname;
+        token.userinfo = user.userinfo;
+      }
+      return token;
+    },
+    session({ session, token }) {
+      if (token && session.user) {
+        session.user.nickname = token.nickname;
+        session.user.userinfo = token.userinfo;
+      }
       return session;
     },
   },

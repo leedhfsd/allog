@@ -35,7 +35,7 @@ export default function Profile() {
       },
     ).then(() => setIsCheck(false));
   };
-  console.log(isCheck);
+
   if (status === "unauthenticated") {
     return <div>로그인 후 이용 가능합니다.</div>;
   }
