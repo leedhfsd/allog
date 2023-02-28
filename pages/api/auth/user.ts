@@ -40,7 +40,13 @@ async function getUser(req: NextApiRequest, res: NextApiResponse) {
   const usersCollection = database.collection("users");
   const { name, email } = req.query;
   try {
-    const projection = { name: 1, email: 1, image: 1, nickname: 1 };
+    const projection = {
+      name: 1,
+      email: 1,
+      image: 1,
+      nickname: 1,
+      userinfo: 1,
+    };
     const fetchData = await usersCollection.findOne(
       {
         $or: [{ name }, { email }],

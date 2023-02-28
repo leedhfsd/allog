@@ -13,6 +13,16 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
       allowDangerousEmailAccountLinking: true,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.email.split("@")[0],
+          email: profile.email,
+          image: profile.picture,
+          nickname: "",
+          userinfo: "",
+        };
+      },
       token: {
         params: {
           nickname: "",
@@ -24,6 +34,16 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
       allowDangerousEmailAccountLinking: true,
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.email.split("@")[0],
+          email: profile.email,
+          image: profile.avatar_url,
+          nickname: "",
+          userinfo: "",
+        };
+      },
       token: {
         params: {
           nickname: "",

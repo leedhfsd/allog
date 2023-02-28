@@ -21,7 +21,7 @@ import { authOptions } from "./api/auth/[...nextauth]";
 interface Certificate {
   name: string;
   email: string;
-  img: string | undefined;
+  image: string | undefined;
 }
 function Write({
   data,
@@ -119,7 +119,7 @@ function Write({
             createdAt: `${kst.getFullYear()}년 ${
               kst.getMonth() + 1
             }월 ${kst.getDate()}일`,
-            writer: session.user.email?.split("@")[0],
+            writer: session.user.name,
             profile: session.user.image,
             slug: url,
             sanitizedHtml: markdown,
@@ -289,7 +289,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     typeof user === "string" &&
     typeof id === "string" &&
     session &&
-    curUser.email.split("@")[0] === user
+    curUser.name === user
   ) {
     const res = await fetch(
       `${process.env.BASE_URL}/api/article?writer=${user}&id=${id}`,

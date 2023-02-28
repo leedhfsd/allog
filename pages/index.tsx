@@ -10,7 +10,7 @@ export default function Home() {
   );
   if (error) return <div>게시글을 불러오는 것을 실패하였습니다.</div>;
   if (isLoading) return <div>로딩중...</div>;
-  if (!data) return null;
+  if (!data) return <div />;
   return (
     <div className="flex flex-wrap my-12 min-h-[728px]">
       {data.map((article) => (

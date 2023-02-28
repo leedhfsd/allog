@@ -5,22 +5,16 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import "prismjs/themes/prism.css";
 import "github-markdown-css";
-import { Article } from "../../interfaces";
-
-interface User {
-  name: string;
-  email: string;
-  image: string;
-}
+import { Article, User } from "../../interfaces";
 
 function Post({
   data,
   slug,
+  userdata,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [article, setArticle] = useState<Article[]>([]);
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState<User>();
   const [isDelete, setisDelete] = useState(false);
-  const [userinfo, setUserinfo] = useState({});
   const { data: session } = useSession();
   const router = useRouter();
   const slugs = slug as string[];
@@ -29,12 +23,9 @@ function Post({
   };
 
   useEffect(() => {
-    if (session && session.user) {
-      const curUser = session.user as User;
-      setUser(curUser.email.split("@")[0]);
-    }
+    setUser(userdata);
     setArticle(data as Article[]);
-  }, [data, slug, session]);
+  }, [data, slug, userdata]);
 
   useEffect(() => {
     const markdownDiv = document.getElementById("markdown") as HTMLDivElement;
@@ -110,6 +101,29 @@ function Post({
       </div>
     );
   }
+  if (slugs.length === 1 && user) {
+    return (
+      <div className="flex flex-col justify-center py-24 items-center w-full">
+        <div className="flex flex-col items-center">
+          <div className="flex flex-row items-center mb-8">
+            <img
+              className="rounded-full mr-6"
+              src={user.image}
+              width={128}
+              height={128}
+              alt="user-profile"
+            />
+            <div className="text-2xl font-bold">{user.nickname}</div>
+            <div>{user.userinfo}</div>
+          </div>
+          <div>
+            <hr className="border-b-2 my-4 border-sky-700 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (slugs.length >= 2 && article.length > 0) {
     return (
       <div className="w-full">
@@ -125,26 +139,28 @@ function Post({
                 <span className="text-gray-500">{post.createdAt}</span>
               </div>
               <div className="flex flex-row">
-                {session && user === slugs[0].substring(1) && (
-                  <div className="text-gray-400">
-                    <a
-                      href={`/write?user=${slugs[0].substring(1)}&id=${
-                        slugs[1]
-                      }`}
-                      type="button"
-                      className="mx-1"
-                    >
-                      수정
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => setisDelete((value) => !value)}
-                      className="mr-1"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                )}
+                {session &&
+                  session.user &&
+                  session.user.name === slugs[0].substring(1) && (
+                    <div className="text-gray-400">
+                      <a
+                        href={`/write?user=${slugs[0].substring(1)}&id=${
+                          slugs[1]
+                        }`}
+                        type="button"
+                        className="mx-1"
+                      >
+                        수정
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => setisDelete((value) => !value)}
+                        className="mr-1"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  )}
                 <span>❤ {post.liked}</span>
               </div>
             </div>
@@ -180,7 +196,14 @@ function Post({
                   height={127}
                   alt="user-profile"
                 />
-                <div className="text-xl font-bold">{slugs[0]}</div>
+                <div className="flex flex-col">
+                  {user?.nickname !== "" ? (
+                    <div className="text-xl font-bold">{user?.nickname}</div>
+                  ) : (
+                    <div className="text-xl font-bold">{user?.name}</div>
+                  )}
+                  <div className="mt-1">{user?.userinfo}</div>
+                </div>
               </Link>
             </div>
           </div>
@@ -220,28 +243,35 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
   let writer = "";
   let id = "";
+  let articleData: Response | undefined;
   let res: Response | undefined;
   if (slug && slug[0]) {
     writer = encodeURIComponent(slug[0].substring(1));
-    res = await fetch(`${process.env.BASE_URL}/api/article?writer=${writer}`);
+    articleData = await fetch(
+      `${process.env.BASE_URL}/api/article?writer=${writer}`,
+    );
+    res = await fetch(`${process.env.BASE_URL}/api/auth/user?name=${writer}`);
   }
   if (slug && slug[1]) {
     [writer, id] = [encodeURIComponent(slug[0].substring(1)), slug[1]];
-    res = await fetch(
+    articleData = await fetch(
       `${process.env.BASE_URL}/api/article?writer=${writer}&id=${id}`,
     );
+    res = await fetch(`${process.env.BASE_URL}/api/auth/user?name=${writer}`);
   }
-  if (res && res.status !== 200) {
+  if (res?.status !== 200) {
     return {
       notFound: true,
     };
   }
-  if (res && res.status === 200) {
-    const data = (await res.json()) as Article[];
+  if (articleData && articleData.status === 200 && res?.status === 200) {
+    const data = (await articleData.json()) as Article[];
+    const userdata = (await res.json()) as User;
     return {
       props: {
         data,
         slug,
+        userdata,
       },
     };
   }
