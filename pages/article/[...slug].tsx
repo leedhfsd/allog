@@ -28,11 +28,16 @@ function Post({
   }, [data, slug, userdata]);
 
   useEffect(() => {
-    const markdownDiv = document.getElementById("markdown") as HTMLDivElement;
-    if (slugs.length > 1 && article.length === 1 && article[0].sanitizedHtml) {
+    if (
+      slugs &&
+      slugs.length > 1 &&
+      article.length === 1 &&
+      article[0].sanitizedHtml
+    ) {
+      const markdownDiv = document.getElementById("markdown") as HTMLDivElement;
       markdownDiv.innerHTML = article[0].sanitizedHtml;
     }
-  }, [slugs.length, article]);
+  }, [slugs, article]);
   const handleDeleteArticle = async () => {
     await fetch(
       `/api/article?writer=${article[0].writer}&id=${article[0]._id}`,
@@ -44,7 +49,7 @@ function Post({
 
   if (slugs.length === 1 && article.length > 0) {
     return (
-      <div className="flex flex-col justify-center py-24 items-center w-full">
+      <div className="flex flex-col py-12 items-center w-full">
         <div className="flex flex-col items-center">
           <div className="flex flex-row items-center mb-8">
             <img
@@ -54,11 +59,14 @@ function Post({
               height={128}
               alt="user-profile"
             />
-            <div className="text-2xl font-bold">{slugs[0]}</div>
+            <div>
+              <div className="text-2xl font-bold">{user?.nickname}</div>
+              <div className="mt-1">{user?.userinfo}</div>
+            </div>
           </div>
           <div>
             <div className="text-xl font-bold text-sky-700">
-              {slugs[0]}이 작성한 글들을 확인하세요.
+              {user?.nickname}이 작성한 글들을 확인하세요.
             </div>
             <hr className="border-b-2 my-4 border-sky-700 w-full" />
           </div>
@@ -101,30 +109,8 @@ function Post({
       </div>
     );
   }
-  if (slugs.length === 1 && user) {
-    return (
-      <div className="flex flex-col justify-center py-24 items-center w-full">
-        <div className="flex flex-col items-center">
-          <div className="flex flex-row items-center mb-8">
-            <img
-              className="rounded-full mr-6"
-              src={user.image}
-              width={128}
-              height={128}
-              alt="user-profile"
-            />
-            <div className="text-2xl font-bold">{user.nickname}</div>
-            <div>{user.userinfo}</div>
-          </div>
-          <div>
-            <hr className="border-b-2 my-4 border-sky-700 w-full" />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
-  if (slugs.length >= 2 && article.length > 0) {
+  if (slugs.length >= 2 && article.length === 1) {
     return (
       <div className="w-full">
         {article.map((post) => (
@@ -238,6 +224,41 @@ function Post({
       </div>
     );
   }
+  return (
+    <div className="flex flex-col py-12 items-center min-h-[748px]">
+      <div className="flex flex-col items-center">
+        <div className="flex flex-row items-center mb-8">
+          <img
+            className="rounded-full mr-6"
+            src={user?.image}
+            width={128}
+            height={128}
+            alt="user-profile"
+          />
+          <div className="flex flex-col">
+            {user?.nickname !== "" ? (
+              <div className="text-xl font-bold">{user?.nickname}</div>
+            ) : (
+              <div className="text-xl font-bold">{user?.name}</div>
+            )}
+            <div className="mt-1">{user?.userinfo}</div>
+          </div>
+        </div>
+        <div>
+          {user?.nickname !== "" ? (
+            <div className="text-xl font-bold text-sky-700">
+              {user?.nickname}이 작성한 글이 아직 없네요!
+            </div>
+          ) : (
+            <div className="text-xl font-bold text-sky-700">
+              {user?.name}이 작성한 글이 아직 없네요!
+            </div>
+          )}
+          <hr className="border-b-2 my-4 border-sky-700 w-full" />
+        </div>
+      </div>
+    </div>
+  );
 }
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
@@ -245,14 +266,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let id = "";
   let articleData: Response | undefined;
   let res: Response | undefined;
-  if (slug && slug[0]) {
+  if (slug && slug.length === 1) {
     writer = encodeURIComponent(slug[0].substring(1));
     articleData = await fetch(
       `${process.env.BASE_URL}/api/article?writer=${writer}`,
     );
     res = await fetch(`${process.env.BASE_URL}/api/auth/user?name=${writer}`);
-  }
-  if (slug && slug[1]) {
+  } else if (slug && slug.length > 1) {
     [writer, id] = [encodeURIComponent(slug[0].substring(1)), slug[1]];
     articleData = await fetch(
       `${process.env.BASE_URL}/api/article?writer=${writer}&id=${id}`,
@@ -264,7 +284,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true,
     };
   }
-  if (articleData && articleData.status === 200 && res?.status === 200) {
+  if (articleData && articleData.status === 200 && res.status === 200) {
     const data = (await articleData.json()) as Article[];
     const userdata = (await res.json()) as User;
     return {
@@ -275,8 +295,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
+  const userdata = (await res.json()) as User;
   return {
-    props: {},
+    props: {
+      data: {},
+      slug,
+      userdata,
+    },
   };
 };
 
