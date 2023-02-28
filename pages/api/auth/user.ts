@@ -28,7 +28,7 @@ async function postUser(req: NextApiRequest, res: NextApiResponse) {
   };
   try {
     await usersCollection.insertOne(user);
-    return res.send("User registration completed");
+    return res.send({ ok: "User registration completed" });
   } catch (err) {
     return res.status(500).send({ error: "failed to reigister user" });
   }
@@ -57,7 +57,7 @@ async function getUser(req: NextApiRequest, res: NextApiResponse) {
       const response = res.json(fetchData);
       return res.send(response);
     }
-    return res.status(404).send("404 Not Found");
+    return res.status(404).send({ error: "404 Not Found" });
   } catch (e) {
     return res.send({ error: "User is not registered" });
   }
@@ -80,7 +80,7 @@ async function deleteUser(req: NextApiRequest, res: NextApiResponse) {
     if (validationPassword(enteredPassword, hashedPassword, salt)) {
       try {
         await usersCollection.deleteOne({ userEmail });
-        return res.status(200).send("User data Deleted");
+        return res.status(200).send({ ok: "User data Deleted" });
       } catch (e) {
         return res.status(500).send({ error: "failed to delete user data" });
       }
@@ -104,7 +104,7 @@ async function patchUser(req: NextApiRequest, res: NextApiResponse) {
   }
   try {
     await usersCollection.updateOne(query, update);
-    return res.status(200).send("Patch Compledted");
+    return res.status(200).send({ ok: "Patch Compledted" });
   } catch (err) {
     return res.status(500).send({ error: "failed to patch data" });
   }

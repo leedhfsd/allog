@@ -23,7 +23,7 @@ function Post({
   };
 
   useEffect(() => {
-    setUser(userdata);
+    setUser(userdata as User);
     setArticle(data as Article[]);
   }, [data, slug, userdata]);
 
@@ -225,36 +225,38 @@ function Post({
     );
   }
   return (
-    <div className="flex flex-col py-12 items-center min-h-[748px]">
-      <div className="flex flex-col items-center">
-        <div className="flex flex-row items-center mb-8">
-          <img
-            className="rounded-full mr-6"
-            src={user?.image}
-            width={128}
-            height={128}
-            alt="user-profile"
-          />
-          <div className="flex flex-col">
-            {user?.nickname !== "" ? (
-              <div className="text-xl font-bold">{user?.nickname}</div>
-            ) : (
-              <div className="text-xl font-bold">{user?.name}</div>
-            )}
-            <div className="mt-1">{user?.userinfo}</div>
+    <div>
+      <div className="flex flex-col py-12 items-center min-h-[748px]">
+        <div className="flex flex-col items-center">
+          <div className="flex flex-row items-center mb-8">
+            <img
+              className="rounded-full mr-6"
+              src={user?.image}
+              width={128}
+              height={128}
+              alt="user-profile"
+            />
+            <div className="flex flex-col">
+              {user?.nickname !== "" ? (
+                <div className="text-xl font-bold">{user?.nickname}</div>
+              ) : (
+                <div className="text-xl font-bold">{user?.name}</div>
+              )}
+              <div className="mt-1">{user?.userinfo}</div>
+            </div>
           </div>
-        </div>
-        <div>
-          {user?.nickname !== "" ? (
-            <div className="text-xl font-bold text-sky-700">
-              {user?.nickname}이 작성한 글이 아직 없네요!
-            </div>
-          ) : (
-            <div className="text-xl font-bold text-sky-700">
-              {user?.name}이 작성한 글이 아직 없네요!
-            </div>
-          )}
-          <hr className="border-b-2 my-4 border-sky-700 w-full" />
+          <div>
+            {user?.nickname !== "" ? (
+              <div className="text-xl font-bold text-sky-700">
+                {user?.nickname}님이 작성한 글이 아직 없네요!
+              </div>
+            ) : (
+              <div className="text-xl font-bold text-sky-700">
+                {user?.name}님이 작성한 글이 아직 없네요!
+              </div>
+            )}
+            <hr className="border-b-2 my-4 border-sky-700 w-full" />
+          </div>
         </div>
       </div>
     </div>
@@ -279,29 +281,31 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     );
     res = await fetch(`${process.env.BASE_URL}/api/auth/user?name=${writer}`);
   }
-  if (res?.status !== 200) {
-    return {
-      notFound: true,
-    };
-  }
-  if (articleData && articleData.status === 200 && res.status === 200) {
-    const data = (await articleData.json()) as Article[];
-    const userdata = (await res.json()) as User;
+  const userdata = (await res?.json()) as User;
+  const article = (await articleData?.json()) as Article[];
+
+  if (article[0] && userdata) {
     return {
       props: {
-        data,
+        data: article,
         slug,
         userdata,
       },
     };
   }
-  const userdata = (await res.json()) as User;
+
+  if (slug && slug.length === 1 && res?.status === 200) {
+    return {
+      props: {
+        data: {},
+        slug,
+        userdata,
+      },
+    };
+  }
+
   return {
-    props: {
-      data: {},
-      slug,
-      userdata,
-    },
+    notFound: true,
   };
 };
 

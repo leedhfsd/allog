@@ -22,7 +22,7 @@ async function getAritcleByWriter(
     if (data.length > 0) {
       return res.status(200).send(data);
     }
-    return res.status(404).send("404 Not Found");
+    return res.status(404).send({ error: "404 Not Found" });
   } catch (err) {
     return res.status(500).send({ error: "Failed to fetch data" });
   }
@@ -47,7 +47,7 @@ async function getAritcleByID(
     if (data && Object.keys(data)) {
       return res.status(200).send(data);
     }
-    return res.status(404).send("404 Not Found");
+    return res.status(404).send({ error: "404 Not Found" });
   } catch (err) {
     return res.status(500).send({ error: "Failed to fetch data" });
   }
@@ -74,7 +74,7 @@ async function deleteArticle(
       _id: Number(id),
       writer,
     });
-    return res.status(200).send("Delete Completed");
+    return res.status(200).send({ ok: "Delete Completed" });
   } catch (err) {
     return res.status(500).send({ error: "Failed to Delete data" });
   }

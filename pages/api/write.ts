@@ -47,7 +47,7 @@ async function postData(req: NextApiRequest, res: NextApiResponse) {
   };
   try {
     await articleCollection.insertOne(article);
-    return res.status(201).send("Post Completed");
+    return res.status(201).send({ ok: "Post Completed" });
   } catch (err) {
     return res.status(500).send({ error: "failed to fetch data" });
   }
@@ -62,7 +62,7 @@ async function patchData(req: NextApiRequest, res: NextApiResponse) {
   const query = { _id: formData._id };
   try {
     await articleCollection.updateOne(query, update);
-    return res.status(200).send("Patch Compledted");
+    return res.status(200).send({ ok: "Patch Compledted" });
   } catch (err) {
     return res.status(500).send({ error: "failed to patch data" });
   }
