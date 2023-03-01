@@ -57,7 +57,7 @@ async function deleteArticle(
   req: NextApiRequest,
   res: NextApiResponse,
   writer: string,
-  id: string,
+  id: string | undefined,
 ) {
   const client = await clientPromise;
   const database = client.db();
@@ -69,15 +69,30 @@ async function deleteArticle(
   if (writer !== session.user?.email?.split("@")[0]) {
     return res.status(403).send({ error: "Forbidden" });
   }
-  try {
-    await articleCollection.deleteOne({
-      _id: Number(id),
-      writer,
-    });
-    return res.status(200).send({ ok: "Delete Completed" });
-  } catch (err) {
-    return res.status(500).send({ error: "Failed to Delete data" });
+  if (typeof id === "string") {
+    try {
+      await articleCollection.deleteOne({
+        _id: Number(id),
+        writer,
+      });
+      return res.status(200).send({ ok: "Delete Completed" });
+    } catch (err) {
+      return res.status(500).send({ error: "Failed to Delete data" });
+    }
   }
+  if (typeof id === "undefined") {
+    try {
+      await articleCollection.deleteMany({
+        writer,
+      });
+      return res
+        .status(200)
+        .send({ ok: "All articles of the user have been deleted" });
+    } catch (err) {
+      return res.status(500).send({ error: "Failed to Delete data" });
+    }
+  }
+  return res.status(500).send({ error: "Not allowed query" });
 }
 
 export default async function handler(
@@ -85,7 +100,6 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const { writer, id } = req.query;
-
   switch (req.method) {
     case "GET":
       if (typeof writer === "string" && typeof id === "string") {
@@ -95,7 +109,10 @@ export default async function handler(
       }
       break;
     case "DELETE":
-      if (typeof writer === "string" && typeof id === "string") {
+      if (
+        typeof writer === "string" &&
+        (typeof id === "string" || typeof id === "undefined")
+      ) {
         await deleteArticle(req, res, writer, id);
       }
       break;

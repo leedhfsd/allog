@@ -8,7 +8,7 @@ declare module "next-auth" {
     image: string;
     nickname?: string;
     userinfo?: string;
-    emailVerified: boolean | null;
+    emailVerified?: boolean | null;
   }
   interface Session extends DefaultSession {
     user?: User;

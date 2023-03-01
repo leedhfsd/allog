@@ -66,7 +66,7 @@ function Post({
           </div>
           <div>
             <div className="text-xl font-bold text-sky-700">
-              {user?.nickname}이 작성한 글들을 확인하세요.
+              {user?.nickname}님이 작성한 글들을 확인하세요.
             </div>
             <hr className="border-b-2 my-4 border-sky-700 w-full" />
           </div>

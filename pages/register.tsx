@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { SyntheticEvent, useEffect, useRef, useState } from "react";
-import { User } from "../interfaces";
 import { validationPassword } from "../lib/validation";
 
 export default function Register() {
@@ -38,7 +37,7 @@ export default function Register() {
   const onSubmitForm = (e: SyntheticEvent) => {
     e.preventDefault();
     const postUser = async () => {
-      const formData: User = {
+      const formData = {
         name: email.split("@")[0],
         email,
         password,

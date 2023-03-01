@@ -1,4 +1,4 @@
-export type Article = {
+export interface Article {
   _id: number;
   title: string;
   content: string;
@@ -9,14 +9,16 @@ export type Article = {
   profile: string;
   slug: string;
   sanitizedHtml: string;
-};
+}
 
-export type User = {
+export interface User {
   name: string;
   email: string;
-  password: string;
-  image: string;
-  nickname: string;
-  userinfo: string;
+  image?: string;
+  nickname?: string;
+  userinfo?: string;
+  hashedPassword?: string;
+  password?: string;
+  salt?: string;
   emailVerified?: boolean | null;
-};
+}

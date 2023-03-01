@@ -8,6 +8,7 @@ export default function Header() {
   const [isCheck, setCheck] = useState(false);
   const [user, setUser] = useState<DefaultSession["user"]>();
   const listRef = useRef<HTMLUListElement>(null);
+
   const loginHandler = () => {
     signIn().catch(() => {
       throw new Error("Login Failed...");

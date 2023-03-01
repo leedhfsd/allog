@@ -2,10 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { User } from "../../../interfaces";
 import clientPromise from "../../../lib/db/db";
-import {
-  createHashPassword,
-  validationPassword,
-} from "../../../lib/validation";
+import { createHashPassword } from "../../../lib/validation";
 import { authOptions } from "./[...nextauth]";
 
 async function postUser(req: NextApiRequest, res: NextApiResponse) {
@@ -13,7 +10,8 @@ async function postUser(req: NextApiRequest, res: NextApiResponse) {
   const database = client.db();
   const usersCollection = database.collection("users");
   const formData = req.body as User;
-  const { salt, hashedPassword } = createHashPassword(formData.password);
+  const password = formData.password as string;
+  const { salt, hashedPassword } = createHashPassword(password);
   if (!formData.emailVerified) {
     return res.status(401).send({ error: "Unauthorized" });
   }
@@ -67,25 +65,18 @@ async function deleteUser(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
   const database = client.db();
   const usersCollection = database.collection("users");
-  const formData = req.query;
-  const userEmail = formData.email;
-  const enteredPassword = formData.password;
+  const { email } = req.query;
+
   const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return res.status(401).send({ error: "Unauthorized" });
   }
-  const fetchUser = await usersCollection.findOne({ userEmail });
-  if (fetchUser) {
-    const { hashedPassword, salt } = fetchUser;
-    if (validationPassword(enteredPassword, hashedPassword, salt)) {
-      try {
-        await usersCollection.deleteOne({ userEmail });
-        return res.status(200).send({ ok: "User data Deleted" });
-      } catch (e) {
-        return res.status(500).send({ error: "failed to delete user data" });
-      }
-    } else {
-      return res.status(404).send({ error: "404 Not Found" });
+  if (session && session.user?.email === email) {
+    try {
+      await usersCollection.deleteOne({ email });
+      return res.status(200).send({ ok: "User data Deleted" });
+    } catch (e) {
+      return res.status(500).send({ error: "failed to delete user data" });
     }
   }
   return res.status(500).send({ error: "Not allowed request" });
