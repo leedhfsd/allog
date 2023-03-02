@@ -53,6 +53,56 @@ async function getAritcleByID(
   }
 }
 
+async function getArticleByHashtag(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  hashtag: string,
+) {
+  const client = await clientPromise;
+  const database = client.db();
+  const articleCollection = database.collection("articleDB");
+  let data: WithId<Document>[] = [];
+  try {
+    const fetchData = await articleCollection.find({ hashtag }).toArray();
+    data = fetchData;
+    if (data.length > 0) {
+      return res.status(200).send(data);
+    }
+    return res.status(404).send({ error: "404 Not Found" });
+  } catch (err) {
+    return res.status(500).send({ error: "Failed to fetch data" });
+  }
+}
+
+async function getArticleByAll(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  all: string,
+) {
+  const client = await clientPromise;
+  const database = client.db();
+  const articleCollection = database.collection("articleDB");
+  let data: WithId<Document>[] = [];
+  try {
+    const fetchData = await articleCollection
+      .find({
+        $or: [
+          { hashtag: all },
+          { writer: all },
+          { title: { $regex: `${all}`, $options: "i" } },
+        ],
+      })
+      .toArray();
+    data = fetchData;
+    if (data.length > 0) {
+      return res.status(200).send(data);
+    }
+    return res.status(404).send({ error: "404 Not Found" });
+  } catch (err) {
+    return res.status(500).send({ error: "Failed to fetch data" });
+  }
+}
+
 async function deleteArticle(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -99,13 +149,23 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { writer, id } = req.query;
+  const { writer, id, hashtag, all } = req.query;
   switch (req.method) {
     case "GET":
+      if (typeof hashtag === "string") {
+        await getArticleByHashtag(req, res, hashtag);
+        break;
+      }
+      if (typeof all === "string") {
+        await getArticleByAll(req, res, all);
+        break;
+      }
       if (typeof writer === "string" && typeof id === "string") {
         await getAritcleByID(req, res, decodeURIComponent(writer), id);
+        break;
       } else if (typeof writer === "string") {
         await getAritcleByWriter(req, res, decodeURIComponent(writer));
+        break;
       }
       break;
     case "DELETE":
