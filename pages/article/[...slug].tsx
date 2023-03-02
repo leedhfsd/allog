@@ -60,28 +60,40 @@ function Post({
               alt="user-profile"
             />
             <div>
-              <div className="text-2xl font-bold">{user?.nickname}</div>
+              {user && user.nickname !== "" ? (
+                <div className="text-2xl font-bold">{user?.nickname}</div>
+              ) : (
+                <div className="text-2xl font-bold">{user?.name}</div>
+              )}
               <div className="mt-1">{user?.userinfo}</div>
             </div>
           </div>
           <div>
-            <div className="text-xl font-bold text-sky-700">
-              {user?.nickname}님이 작성한 글들을 확인하세요.
-            </div>
+            {user && user.nickname !== "" ? (
+              <div className="text-xl font-bold text-sky-700">
+                {user?.nickname}님이 작성한 글들을 확인해보세요.
+              </div>
+            ) : (
+              <div className="text-xl font-bold text-sky-700">
+                {user?.name}님이 작성한 글들을 확인해보세요.
+              </div>
+            )}
+
             <hr className="border-b-2 my-4 border-sky-700 w-full" />
           </div>
           {article.map((post) => (
-            <div className="my-16 w-[400px]" key={post._id}>
+            <div className="my-8 md:w-[768px]" key={post._id}>
               <Link href={`/article/@${post.writer}/${post._id}/${post.slug}`}>
                 <img
                   alt="sample"
-                  className="rounded-md inline-block"
+                  className="rounded-md inline-block w-full"
                   src="/sample.gif"
                 />
-                <h1 className="text-2xl font-bold my-1 truncate">
+                <title>{post.writer} | Allog</title>
+                <h1 className="text-2xl font-bold my-4 truncate">
                   {post.title}
                 </h1>
-                <p className="text-base mb-4 line_clamp h-12 whitespace-pre-wrap">
+                <p className="text-base mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
                   {post.content}
                 </p>
               </Link>
@@ -115,6 +127,7 @@ function Post({
       <div className="w-full">
         {article.map((post) => (
           <div className="my-16 mx-12 2xl:mx-80 3xl:mx-96" key={post._id}>
+            <title>{post.title}</title>
             <h1 className="text-4xl lg:text-5xl font-bold whitespace-pre-wrap">
               {post.title}
             </h1>

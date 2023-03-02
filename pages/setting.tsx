@@ -76,6 +76,7 @@ export default function Profile() {
     <div>
       {session && (
         <div className="flex flex-col h-[768px] my-16 md:w-[768px] md:mx-32">
+          <title>설정 | Allog</title>
           <section className="flex items-center">
             <div className="flex flex-col">
               <img
@@ -156,7 +157,7 @@ export default function Profile() {
                 회원 탈퇴
               </button>
             </div>
-            <div className="text-gray-500 text-xs my-1">
+            <div className="text-gray-500 text-xs my-3">
               회원님의 모든 작성글과 회원정보가 삭제되며 복구되지 않습니다.
             </div>
           </section>

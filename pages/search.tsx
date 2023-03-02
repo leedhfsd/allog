@@ -3,7 +3,7 @@ import { SyntheticEvent, useState } from "react";
 import { Article } from "../interfaces";
 
 export default function Search() {
-  const [posts, setPosts] = useState<Article[]>([]);
+  const [article, setArticle] = useState<Article[]>([]);
   const [query, setQuery] = useState("");
   const [isClicked, setIsClicked] = useState(false);
   const onClickSearch = async (e: SyntheticEvent) => {
@@ -12,10 +12,11 @@ export default function Search() {
     e.preventDefault();
     const res = await fetch(`/api/article?all=${query}`);
     const data = (await res.json()) as Article[];
-    setPosts(data);
+    setArticle(data);
   };
   return (
     <div className="flex flex-col items-center">
+      <title>검색 | Allog</title>
       <section className="w-3/4 lg:w-[768px] mb-8">
         <div className="mt-16 flex border border-black h-16">
           <div className="flex w-full text-center">
@@ -38,11 +39,11 @@ export default function Search() {
       <section className="">
         {isClicked && (
           <div className="text-gray-600">
-            총<span className="font-bold mx-1">{posts.length}개</span>의
+            총<span className="font-bold mx-1">{article.length}개</span>의
             작성글을 찾았습니다.
           </div>
         )}
-        {posts.map((post) => (
+        {article.map((post) => (
           <div className="my-8 md:w-[768px]" key={post._id}>
             <div className="flex flex-row items-center mb-8">
               <img

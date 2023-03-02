@@ -180,6 +180,7 @@ function Write({
   }, [markdown]);
   return (
     <div className="flex h-screen mx-16 lg:mx-24 py-4">
+      <title>글 작성 | Allog</title>
       <div className="flex flex-col w-full lg:w-1/2">
         <div>
           <form>

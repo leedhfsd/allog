@@ -81,6 +81,7 @@ export default function Register() {
   }, [option, password]);
   return (
     <div>
+      <title>회원가입 | Allog</title>
       <div className="flex flex-col items-center justify-center">
         <div className="w-[400px] h-[768px] my-10">
           <div className="text-3xl font-bold text-center my-16">

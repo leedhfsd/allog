@@ -13,6 +13,7 @@ export default function Home() {
   if (!data) return <div />;
   return (
     <div className="flex flex-wrap my-12 min-h-[728px]">
+      <title>Allog</title>
       {data.map((article) => (
         <div
           className="sm:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 px-4 py-4 cursor-pointer"
