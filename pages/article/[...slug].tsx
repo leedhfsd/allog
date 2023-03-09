@@ -90,41 +90,89 @@ function Post({
 
             <hr className="border-b-2 my-4 border-sky-700 w-full" />
           </div>
-          {article.map((post) => (
-            <div className="my-8 md:w-[768px]" key={post._id}>
-              <Link href={`/article/@${post.writer}/${post._id}/${post.slug}`}>
-                <img
-                  alt="sample"
-                  className="rounded-md inline-block w-full"
-                  src="/sample.gif"
-                />
-                <h1 className="text-2xl font-bold my-4 truncate">
-                  {post.title}
-                </h1>
-                <p className="text-base mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
-                  {post.content}
-                </p>
-              </Link>
-              <div>
-                {post.hashtag.map((item) => {
-                  return (
-                    <a
-                      key={item}
-                      href={`/hashtag/${item}`}
-                      className="text-sky-500 px-1 mx-2 my-4 cursor-pointer inline-block text-base"
-                    >
-                      {item}
-                    </a>
-                  );
-                })}
+          {session?.user?.name === user?.name &&
+            article
+              .filter((post) => post.disclosureStatus)
+              .map((post) => (
+                <div className="my-8 md:w-[768px]" key={post._id}>
+                  <Link
+                    href={`/article/@${post.writer}/${post._id}/${post.slug}`}
+                  >
+                    <img
+                      alt="sample"
+                      className="rounded-md inline-block w-full"
+                      src="/sample.gif"
+                    />
+                    <h1 className="text-2xl font-bold my-4 truncate">
+                      {post.title}
+                    </h1>
+                    <p className="text-base mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
+                      {post.content}
+                    </p>
+                  </Link>
+                  <div>
+                    {post.hashtag.map((item) => {
+                      return (
+                        <a
+                          key={item}
+                          href={`/hashtag/${item}`}
+                          className="text-sky-500 px-1 mx-2 my-4 cursor-pointer inline-block text-base"
+                        >
+                          {item}
+                        </a>
+                      );
+                    })}
+                  </div>
+                  <div className="flex flex-row truncate text-sm text-gray-400">
+                    <div className="">{post.createdAt}</div>
+                    <span className="px-2">·</span>
+                    <div>❤ {post.liked}</div>
+                    <span className="px-2">·</span>
+                    <div className="bg-[#333333] text-white pl-2 pr-4 rounded">
+                      🗝 비공개
+                    </div>
+                  </div>
+                </div>
+              ))}
+          {article
+            .filter((post) => !post.disclosureStatus)
+            .map((post) => (
+              <div className="my-8 md:w-[768px]" key={post._id}>
+                <Link
+                  href={`/article/@${post.writer}/${post._id}/${post.slug}`}
+                >
+                  <img
+                    alt="sample"
+                    className="rounded-md inline-block w-full"
+                    src="/sample.gif"
+                  />
+                  <h1 className="text-2xl font-bold my-4 truncate">
+                    {post.title}
+                  </h1>
+                  <p className="text-base mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
+                    {post.content}
+                  </p>
+                </Link>
+                <div>
+                  {post.hashtag.map((item) => {
+                    return (
+                      <a
+                        key={item}
+                        href={`/hashtag/${item}`}
+                        className="text-sky-500 px-1 mx-2 my-4 cursor-pointer inline-block text-base"
+                      >
+                        {item}
+                      </a>
+                    );
+                  })}
+                </div>
+                <div className="flex flex-row truncate text-sm text-gray-400">
+                  <div className="">{post.createdAt}</div>
+                  <span className="px-2">·</span>
+                  <div>❤ {post.liked}</div>
+                </div>
               </div>
-              <div className="flex flex-row truncate text-sm text-gray-400">
-                <div className="">{post.createdAt}</div>
-                <span className="px-2">·</span>
-                <div>❤ {post.liked}</div>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     );

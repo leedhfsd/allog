@@ -258,7 +258,7 @@ function Write({
               />
             </div>
             <div className="flex justify-between items-center mt-4 mb-2">
-              <div className="bg-[#808080] rounded py-1 px-5">
+              <div className="bg-[#333333] rounded py-1 px-5">
                 <input type="checkbox" id="private" onClick={onClickPrivate} />
                 <label
                   htmlFor="private"
