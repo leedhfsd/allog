@@ -1,4 +1,5 @@
 import { signIn } from "next-auth/react";
+import Head from "next/head";
 import { SyntheticEvent, useState } from "react";
 
 export default function Sign() {
@@ -19,6 +20,14 @@ export default function Sign() {
   };
   return (
     <div className="flex flex-col items-center justify-center">
+      <Head>
+        <title>로그인 | Allog</title>
+        <meta
+          name="description"
+          content="Allog의 서비스를 이용하기 위한 로그인을 위한 페이지입니다."
+        />
+        <meta name="keywords" content="BLOG, 블로그, Allog, 로그인" />
+      </Head>
       <div className="w-[300px] h-[768px] my-10">
         <div className="text-3xl font-bold text-center my-16">
           Allog에 어서오세요!

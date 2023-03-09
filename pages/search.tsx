@@ -1,3 +1,4 @@
+import Head from "next/head";
 import Link from "next/link";
 import { SyntheticEvent, useState } from "react";
 import { Article } from "../interfaces";
@@ -16,7 +17,14 @@ export default function Search() {
   };
   return (
     <div className="flex flex-col items-center">
-      <title>검색 | Allog</title>
+      <Head>
+        <title>검색 | Allog</title>
+        <meta
+          name="description"
+          content="Allog의 회원님들이 작성한 글을 검색할 수 있는 페이지입니다."
+        />
+        <meta name="keywords" content="BLOG, 블로그, Allog, 태그검색, 검색" />
+      </Head>
       <section className="w-3/4 lg:w-[768px] mb-8">
         <div className="mt-16 flex border border-black h-16">
           <div className="flex w-full text-center">

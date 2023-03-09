@@ -1,6 +1,7 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import "prismjs/themes/prism.css";
@@ -50,6 +51,14 @@ function Post({
   if (slugs.length === 1 && article.length > 0) {
     return (
       <div className="flex flex-col py-12 items-center w-full">
+        <Head>
+          <title>{`@${article[0].writer} | Allog`}</title>
+          <meta
+            name="description"
+            content="Allog 회원님들의 작성 글, 별명, 한 줄 메시지를 확인할 수 있는 페이지입니다."
+          />
+          <meta name="keywords" content="BLOG, 블로그, Allog" />
+        </Head>
         <div className="flex flex-col items-center">
           <div className="flex flex-row items-center mb-8">
             <img
@@ -89,7 +98,6 @@ function Post({
                   className="rounded-md inline-block w-full"
                   src="/sample.gif"
                 />
-                <title>{post.writer} | Allog</title>
                 <h1 className="text-2xl font-bold my-4 truncate">
                   {post.title}
                 </h1>
@@ -127,7 +135,14 @@ function Post({
       <div className="w-full">
         {article.map((post) => (
           <div className="my-16 mx-12 2xl:mx-80 3xl:mx-96" key={post._id}>
-            <title>{post.title}</title>
+            <Head>
+              <title>{post.title}</title>
+              <meta
+                name="description"
+                content="Allog 회원님들의 작성 글을 확인하는 페이지입니다."
+              />
+              <meta name="keywords" content="BLOG, 블로그, Allog" />
+            </Head>
             <h1 className="text-4xl lg:text-5xl font-bold whitespace-pre-wrap">
               {post.title}
             </h1>

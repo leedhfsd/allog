@@ -1,4 +1,5 @@
 import { signOut, useSession } from "next-auth/react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { SyntheticEvent, useEffect, useState } from "react";
 import { User } from "../interfaces";
@@ -25,6 +26,7 @@ export default function Profile() {
     if (!user) return;
     fetch(`api/auth/user?name=${user.name}`)
       .then((res) => res.json())
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       .then((res) => setUserData(res))
       .catch(() => {
         throw new Error();
@@ -76,9 +78,13 @@ export default function Profile() {
   }
   return (
     <div>
+      <Head>
+        <title>설정 | Allog</title>
+        <meta name="description" content="" />
+        <meta name="keywords" content="BLOG, 블로그, Allog" />
+      </Head>
       {session && (
         <div className="flex flex-col min-h-[720px] my-16 md:w-[768px] md:mx-32">
-          <title>설정 | Allog</title>
           <section className="flex items-center">
             <div className="flex flex-col">
               <img

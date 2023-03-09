@@ -1,6 +1,8 @@
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { setTimeout } from "timers";
+import { User } from "../interfaces";
 import { validateEmail, validationPassword } from "../lib/validation";
 
 type Auth = {
@@ -83,19 +85,26 @@ export default function Register() {
     if (!validateEmail(email)) {
       alert("올바른 이메일 주소를 적어주세요");
     } else {
-      setIsCheck(true);
-      const res = await fetch(`/api/auth/mail?email=${email}`);
-      await res
-        .json()
-        .then((value: Auth) => {
-          setAuthCode(value.authCode);
-          setTimeout(() => {
-            setIsCheck(false);
-          }, 180000);
-        })
-        .catch(() => {
-          throw new Error();
-        });
+      const name = email.split("@")[0];
+      const fetchUser = await fetch(`/api/auth/user?name=${name}`);
+      const res = (await fetchUser.json()) as User;
+      if (res.name) {
+        alert("해당하는 이메일의 ID가 이미 사용중입니다.");
+      } else {
+        setIsCheck(true);
+        const fetchAuth = await fetch(`/api/auth/mail?email=${email}`);
+        await fetchAuth
+          .json()
+          .then((value: Auth) => {
+            setAuthCode(value.authCode);
+            setTimeout(() => {
+              setIsCheck(false);
+            }, 180000);
+          })
+          .catch(() => {
+            throw new Error();
+          });
+      }
     }
   };
   const onClickEmailCertificate = () => {
@@ -124,7 +133,14 @@ export default function Register() {
   }, [option, password]);
   return (
     <div>
-      <title>회원가입 | Allog</title>
+      <Head>
+        <title>회원가입 | Allog</title>
+        <meta
+          name="description"
+          content="Allog의 서비스를 이용하기 위한 회원가입을 위한 페이지입니다."
+        />
+        <meta name="keywords" content="BLOG, 블로그, Allog, 회원가입" />
+      </Head>
       <div className="flex flex-col items-center justify-center">
         <div className="w-[400px] h-[768px] my-10">
           <div className="text-3xl font-bold text-center my-16">

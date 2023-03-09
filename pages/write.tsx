@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Head from "next/head";
 import {
   useState,
   useRef,
@@ -180,7 +181,14 @@ function Write({
   }, [markdown]);
   return (
     <div className="flex h-screen mx-16 lg:mx-24 py-4">
-      <title>글 작성 | Allog</title>
+      <Head>
+        <title>글 작성 | Allog</title>
+        <meta
+          name="description"
+          content="Allog의 회원님들이 글을 작성하는 페이지입니다."
+        />
+        <meta name="keywords" content="BLOG, 블로그, Allog, 글작성" />
+      </Head>
       <div className="flex flex-col w-full lg:w-1/2">
         <div>
           <form>

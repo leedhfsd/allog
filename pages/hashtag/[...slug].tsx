@@ -1,4 +1,5 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Article } from "../../interfaces";
@@ -16,9 +17,19 @@ function Hashtag({
 
   return (
     <div className="flex flex-col items-center">
+      <Head>
+        <title>{`#${hashtag} | Allog`}</title>
+        <meta
+          name="description"
+          content="Allog에서 작성된 글을 해시태그를 이용하여 검색하는 페이지입니다."
+        />
+        <meta
+          name="keywords"
+          content="BLOG, 블로그, Allog, 해시태그, Hashtag"
+        />
+      </Head>
       {article && (
         <section className="">
-          <title>#{hashtag} | Allog</title>
           <h1 className="font-bold text-6xl my-12"># {hashtag}</h1>
           <div className="text-gray-600">
             총<span className="font-bold mx-1">{article.length}개</span>의

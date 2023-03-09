@@ -1,3 +1,4 @@
+import Head from "next/head";
 import Link from "next/link";
 import useSwr from "swr";
 import { Article } from "../interfaces";
@@ -13,7 +14,14 @@ export default function Home() {
   if (!data) return <div />;
   return (
     <div className="flex flex-wrap my-12 min-h-[728px]">
-      <title>Allog</title>
+      <Head>
+        <title>Allog</title>
+        <meta
+          name="description"
+          content="블로그 기능을 제공하는 Allog의 메인 페이지 입니다."
+        />
+        <meta name="keywords" content="BLOG, 블로그, Allog" />
+      </Head>
       {data.map((article) => (
         <div
           className="sm:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 px-4 py-4 cursor-pointer"
