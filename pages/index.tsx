@@ -9,7 +9,7 @@ export default function Home() {
     fetcher,
   );
   if (error) return <div>게시글을 불러오는 것을 실패하였습니다.</div>;
-  if (isLoading) return <div>로딩중...</div>;
+  if (isLoading) return <div />;
   if (!data) return <div />;
   return (
     <div className="flex flex-wrap my-12 min-h-[728px]">

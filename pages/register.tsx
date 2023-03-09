@@ -1,6 +1,12 @@
 import { useRouter } from "next/router";
 import { SyntheticEvent, useEffect, useRef, useState } from "react";
-import { validationPassword } from "../lib/validation";
+import { setTimeout } from "timers";
+import { validateEmail, validationPassword } from "../lib/validation";
+
+type Auth = {
+  ok: number;
+  authCode: string;
+};
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -8,6 +14,10 @@ export default function Register() {
   const [nickname, setNickname] = useState("");
   const [confirmPassword, setconfirmPassword] = useState("");
   const [isValidPassword, setIsValidPassword] = useState(false);
+  const [authCode, setAuthCode] = useState("");
+  const [enteredCode, setEnteredCode] = useState("");
+  const [isCheck, setIsCheck] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
   const [option, setOption] = useState(true);
   const passwordRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -27,7 +37,7 @@ export default function Register() {
     const target = e.target as HTMLInputElement;
     setPassword(target.value);
   };
-  const onChangeconfirmPassword = (e: SyntheticEvent) => {
+  const onChangeConfirmPassword = (e: SyntheticEvent) => {
     const target = e.target as HTMLInputElement;
     setconfirmPassword(target.value);
   };
@@ -36,6 +46,10 @@ export default function Register() {
   };
   const onSubmitForm = (e: SyntheticEvent) => {
     e.preventDefault();
+    if (!emailVerified) {
+      alert("이메일이 인증되지 않았습니다.");
+      return;
+    }
     const postUser = async () => {
       const formData = {
         name: email.split("@")[0],
@@ -45,7 +59,7 @@ export default function Register() {
         nickname,
         image:
           "https://www.shareicon.net/data/128x128/2015/10/04/112008_people_512x512.png",
-        emailVerified: true,
+        emailVerified,
       };
       await fetch("/api/auth/user", {
         method: "POST",
@@ -61,7 +75,36 @@ export default function Register() {
         throw err;
       });
   };
-
+  const onChangeEnteredCode = (e: SyntheticEvent) => {
+    const target = e.target as HTMLInputElement;
+    setEnteredCode(target.value);
+  };
+  const onClickSendAuthCode = async () => {
+    if (!validateEmail(email)) {
+      alert("올바른 이메일 주소를 적어주세요");
+    } else {
+      setIsCheck(true);
+      const res = await fetch(`/api/auth/mail?email=${email}`);
+      await res
+        .json()
+        .then((value: Auth) => {
+          setAuthCode(value.authCode);
+          setTimeout(() => {
+            setIsCheck(false);
+          }, 180000);
+        })
+        .catch(() => {
+          throw new Error();
+        });
+    }
+  };
+  const onClickEmailCertificate = () => {
+    if (authCode !== enteredCode) {
+      alert("인증번호가 일치하지 않습니다.");
+    } else {
+      setEmailVerified(true);
+    }
+  };
   const handleClickOutside = (e: Event) => {
     const target = e.target as HTMLElement;
     if (option && !passwordRef.current?.contains(target)) {
@@ -138,7 +181,7 @@ export default function Register() {
               type="password"
               id="re-password"
               placeholder="동일한 비밀번호를 입력해주세요"
-              onChange={onChangeconfirmPassword}
+              onChange={onChangeConfirmPassword}
             />
             {confirmPassword &&
               (password === confirmPassword ? (
@@ -153,19 +196,38 @@ export default function Register() {
             <label htmlFor="verification" className="flex flex-col mt-4">
               인증번호
             </label>
-            <div className="flex justify-between">
-              <input
-                className="outline-blue-500 py-3 my-2"
-                type="text"
-                id="verification"
-                placeholder="인증번호"
-              />
-              <button
-                className="text-sky-600 py-2 rounded-lg text-sm"
-                type="button"
-              >
-                인증확인
-              </button>
+            <div className="">
+              {!emailVerified ? (
+                <div className="flex justify-between">
+                  <input
+                    className="outline-blue-500 py-3 my-2"
+                    type="text"
+                    id="verification"
+                    placeholder="인증번호"
+                    onChange={onChangeEnteredCode}
+                  />
+                  <div className="flex">
+                    <button
+                      className="text-sky-600 text-sm mx-2"
+                      type="button"
+                      onClick={onClickSendAuthCode}
+                    >
+                      인증발송
+                    </button>
+                    {isCheck && (
+                      <button
+                        className="text-sky-600 text-sm"
+                        type="button"
+                        onClick={onClickEmailCertificate}
+                      >
+                        인증확인
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sky-500 mt-2">인증되었습니다.</div>
+              )}
             </div>
             <button
               className=" bg-sky-600 py-2 text-white rounded-lg text-sm mt-8 mb-2"

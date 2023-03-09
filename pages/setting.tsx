@@ -61,12 +61,14 @@ export default function Profile() {
     }
   };
   const onClickModify = async () => {
-    await fetch(
-      `/api/auth/user?email=${userData?.email}&nickname=${nickname}&userinfo=${userinfo}`,
-      {
-        method: "PATCH",
-      },
-    ).then(() => setIsCheck(false));
+    if (userData) {
+      await fetch(
+        `/api/auth/user?email=${userData?.email}&nickname=${nickname}&userinfo=${userinfo}`,
+        {
+          method: "PATCH",
+        },
+      ).then(() => setIsCheck(false));
+    }
   };
 
   if (status === "unauthenticated") {
@@ -75,7 +77,7 @@ export default function Profile() {
   return (
     <div>
       {session && (
-        <div className="flex flex-col h-[768px] my-16 md:w-[768px] md:mx-32">
+        <div className="flex flex-col min-h-[720px] my-16 md:w-[768px] md:mx-32">
           <title>설정 | Allog</title>
           <section className="flex items-center">
             <div className="flex flex-col">
@@ -87,13 +89,13 @@ export default function Profile() {
                 className="rounded-full"
               />
               <button
-                className="mt-4 mb-2 text-white bg-sky-500 rounded-md py-1 text-sm"
+                className="mt-4 mb-2 text-white bg-sky-500 rounded-md py-1.5 text-sm"
                 type="button"
               >
                 이미지 업로드
               </button>
               <button
-                className="text-white bg-sky-500 rounded-md py-1 text-sm"
+                className="text-white bg-sky-500 rounded-md py-1.5 text-sm"
                 type="button"
               >
                 이미지 제거
@@ -157,9 +159,18 @@ export default function Profile() {
                 회원 탈퇴
               </button>
             </div>
-            <div className="text-gray-500 text-xs my-3">
+            <p className="text-gray-500 text-xs my-3">
               회원님의 모든 작성글과 회원정보가 삭제되며 복구되지 않습니다.
+            </p>
+            <div className="flex mt-12 items-center">
+              <h3 className="font-bold mr-12">이용문의</h3>
+              <span className="font-bold text-sm text-gray-600">
+                leedhfsd@gmail.com
+              </span>
             </div>
+            <p className="text-gray-500 text-xs my-3">
+              이용하시면서 불편하시던 점을 피드백을 주시면 감사하겠습니다.
+            </p>
           </section>
           {isDelete && (
             <div>
@@ -169,7 +180,7 @@ export default function Profile() {
                   <h1 className="font-bold text-2xl mb-3 mt-12">회원 탈퇴</h1>
                   <p className="mb-2">정말로 탈퇴하시겠습니까?</p>
                   <p className="text-xs text-sky-500 mb-16">
-                    이대로 헤어지기는 너무 아쉬워요!
+                    이대로 헤어지기는 너무 아쉽습니다...
                   </p>
                   <div className="flex justify-end mt-12">
                     <button
