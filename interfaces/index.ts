@@ -9,6 +9,7 @@ export interface Article {
   profile: string;
   slug: string;
   sanitizedHtml: string;
+  disclosureStatus: boolean;
 }
 
 export interface User {

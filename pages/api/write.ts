@@ -10,6 +10,7 @@ type PatchArticle = {
   hashtag: string[];
   slug: string[];
   sanitizedHtml: string;
+  disclosureStatus: boolean;
 };
 
 const getNextSequence = async (name: string) => {
@@ -44,6 +45,7 @@ async function postData(req: NextApiRequest, res: NextApiResponse) {
     profile: formData.profile,
     slug: formData.slug,
     sanitizedHtml: formData.sanitizedHtml,
+    disclosureStatus: formData.disclosureStatus,
   };
   try {
     await articleCollection.insertOne(article);

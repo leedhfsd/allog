@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import Header from "./Header";
-import Footer from "./Footer";
 
 type ComponentProps = {
   children: ReactNode;
@@ -11,7 +10,6 @@ export default function Layout({ children }: ComponentProps) {
     <div className="mx-4 lg:mx-24 py-4">
       <Header />
       <main>{children}</main>
-      <Footer />
     </div>
   );
 }
