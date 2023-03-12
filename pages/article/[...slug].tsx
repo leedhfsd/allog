@@ -3,30 +3,71 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import "prismjs/themes/prism.css";
 import "github-markdown-css";
-import { Article, User } from "../../interfaces";
+import { Article, User, Comment } from "../../interfaces";
 
 function Post({
   data,
   slug,
   userdata,
+  commentData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [article, setArticle] = useState<Article[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [user, setUser] = useState<User>();
   const [isDelete, setisDelete] = useState(false);
+  const commentRef = useRef<HTMLTextAreaElement>(null);
+  const [comment, setComment] = useState("");
   const { data: session } = useSession();
   const router = useRouter();
   const slugs = slug as string[];
   const redirect = async () => {
     await router.push("/");
   };
+  const onChangeComment = (e: SyntheticEvent) => {
+    const target = e.target as HTMLTextAreaElement;
+    if (commentRef.current !== null) {
+      commentRef.current.style.height = "30px";
+      commentRef.current.style.height = `${target.scrollHeight}px`;
+    }
+    setComment(target.value);
+  };
+  const onClickComment = async () => {
+    if (comment === "") return;
+    const curDate = new Date();
+    const utc = curDate.getTime() + curDate.getTimezoneOffset() * 60 * 1000;
+    const kst = new Date(utc + 9 * 60 * 60 * 1000);
+    const postData = {
+      articleId: slugs[1],
+      writer: session?.user?.name,
+      email: session?.user?.email,
+      createdAt: `${kst.getFullYear()}년 ${
+        kst.getMonth() + 1
+      }월 ${kst.getDate()}일`,
+      profile: session?.user?.image,
+      content: comment,
+    };
+    await fetch("/api/comment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(postData),
+    }).then(() => {
+      setComment("");
+      if (commentRef.current) {
+        commentRef.current.value = "";
+      }
+    });
+  };
 
   useEffect(() => {
     setUser(userdata as User);
     setArticle(data as Article[]);
-  }, [data, slug, userdata]);
+    setComments(commentData as Comment[]);
+  }, [data, slug, userdata, commentData]);
 
   useEffect(() => {
     if (
@@ -270,6 +311,70 @@ function Post({
             </div>
           </div>
         ))}
+        {session && (
+          <div className="mx-12 my-16 2xl:mx-80 3xl:mx-96">
+            <textarea
+              rows={1}
+              className="focus:outline-none resize-none w-full truncate"
+              placeholder="댓글을 남겨주세요."
+              ref={commentRef}
+              onChange={onChangeComment}
+            />
+            <div className="flex justify-end">
+              <button
+                type="button"
+                className="text-white px-6 py-1 mt-8 bg-sky-500 rounded"
+                onClick={onClickComment}
+              >
+                댓글 작성
+              </button>
+            </div>
+          </div>
+        )}
+        <div className="mx-12 my-16 2xl:mx-80 3xl:mx-96">
+          <div className="my-12 text-xl text-gray-600">
+            <span className="font-bold text-black">
+              {comments.length ? comments.length : 0}
+            </span>
+            개의 댓글
+          </div>
+          {comments.length > 0 &&
+            comments.map((item) => (
+              <div>
+                <div className="flex justify-between">
+                  <div className="flex my-8">
+                    <Link href={`/article/@${item.writer}`}>
+                      <img
+                        src={item.profile}
+                        alt="profile"
+                        height={48}
+                        width={48}
+                        className="rounded-full"
+                      />
+                    </Link>
+                    <div className="flex flex-col mx-4">
+                      <div className="font-bold">{item.writer}</div>
+                      <div className="text-gray-500 text-sm">
+                        {item.createdAt}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex">
+                    <button
+                      type="button"
+                      className="text-gray-500 text-sm mx-1"
+                    >
+                      수정
+                    </button>
+                    <button type="button" className="text-gray-500 text-sm">
+                      삭제
+                    </button>
+                  </div>
+                </div>
+                <p>{item.content}</p>
+              </div>
+            ))}
+        </div>
         {isDelete && (
           <div>
             <div className="bg-[#f9f9f9] z-40 delete_opacity opacity-95" />
@@ -344,6 +449,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let id = "";
   let articleData: Response | undefined;
   let res: Response | undefined;
+  let commentData: Response | undefined;
   if (slug && slug.length === 1) {
     writer = encodeURIComponent(slug[0].substring(1));
     articleData = await fetch(
@@ -355,10 +461,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     articleData = await fetch(
       `${process.env.BASE_URL}/api/article?writer=${writer}&id=${id}`,
     );
+    commentData = await fetch(`${process.env.BASE_URL}/api/comment?id=${id}`);
     res = await fetch(`${process.env.BASE_URL}/api/auth/user?name=${writer}`);
   }
   const userdata = (await res?.json()) as User;
   const article = (await articleData?.json()) as Article[];
+
+  if (slug && slug.length > 1) {
+    const comment = (await commentData?.json()) as Comment[];
+    return {
+      props: {
+        data: article,
+        slug,
+        userdata,
+        commentData: comment,
+      },
+    };
+  }
 
   if (article[0] && userdata) {
     return {
@@ -366,6 +485,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         data: article,
         slug,
         userdata,
+        commentData: {},
       },
     };
   }
@@ -376,6 +496,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         data: {},
         slug,
         userdata,
+        commentData: {},
       },
     };
   }

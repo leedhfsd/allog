@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 export interface Article {
   _id: number;
   title: string;
@@ -22,4 +24,14 @@ export interface User {
   password?: string;
   salt?: string;
   emailVerified?: boolean | null;
+}
+
+export interface Comment {
+  _id?: ObjectId;
+  articleId: number;
+  writer: string;
+  email: string;
+  createdAt: string;
+  content: string;
+  profile: string;
 }

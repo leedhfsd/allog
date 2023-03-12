@@ -51,7 +51,7 @@ async function postData(req: NextApiRequest, res: NextApiResponse) {
     await articleCollection.insertOne(article);
     return res.status(201).send({ ok: "Post Completed" });
   } catch (err) {
-    return res.status(500).send({ error: "failed to fetch data" });
+    return res.status(500).send({ error: "failed to post data" });
   }
 }
 
