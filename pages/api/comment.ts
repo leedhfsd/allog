@@ -96,7 +96,28 @@ async function deleteComment(req: NextApiRequest, res: NextApiResponse) {
         _id: objectId,
       });
     }
+    return res.status(200).send({ ok: "Delete Completed" });
+  } catch (err) {
+    return res.status(500).send({ error: "Failed to Delete data" });
+  }
+}
 
+async function deleteAllComment(req: NextApiRequest, res: NextApiResponse) {
+  const client = await clientPromise;
+  const database = client.db();
+  const commentCollection = database.collection("commentDB");
+  const session = await getServerSession(req, res, authOptions);
+  const { id, author } = req.query;
+  if (!session) {
+    return res.status(401).send({ error: "Unauthorized" });
+  }
+  if (author !== session.user?.email?.split("@")[0]) {
+    return res.status(403).send({ error: "Forbidden" });
+  }
+  try {
+    await commentCollection.deleteMany({
+      $or: [{ articleId: id }, { writer: author }],
+    });
     return res.status(200).send({ ok: "Delete Completed" });
   } catch (err) {
     return res.status(500).send({ error: "Failed to Delete data" });
@@ -107,6 +128,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const { author } = req.query;
   switch (req.method) {
     case "GET":
       await getComment(req, res);
@@ -118,6 +140,10 @@ export default async function handler(
       await patchComment(req, res);
       break;
     case "DELETE":
+      if (typeof author !== "undefined") {
+        await deleteAllComment(req, res);
+        break;
+      }
       await deleteComment(req, res);
       break;
     default:

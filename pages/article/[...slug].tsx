@@ -41,6 +41,7 @@ function Post({
     const utc = curDate.getTime() + curDate.getTimezoneOffset() * 60 * 1000;
     const kst = new Date(utc + 9 * 60 * 60 * 1000);
     const postData = {
+      author: slugs[0].substring(1),
       articleId: slugs[1],
       writer: session?.user?.name,
       email: session?.user?.email,
@@ -150,7 +151,13 @@ function Post({
       markdownDiv.innerHTML = article[0].sanitizedHtml;
     }
   }, [slugs, article]);
-  const handleDeleteArticle = async () => {
+  const handleDeleteArticleComment = async () => {
+    await fetch(
+      `/api/comment?author=${article[0].writer}&id=${article[0]._id}`,
+      {
+        method: "DELETE",
+      },
+    );
     await fetch(
       `/api/article?writer=${article[0].writer}&id=${article[0]._id}`,
       {
@@ -511,7 +518,7 @@ function Post({
                     취소
                   </button>
                   <button
-                    onClick={handleDeleteArticle}
+                    onClick={handleDeleteArticleComment}
                     type="button"
                     className="text-white bg-sky-600 hover:bg-sky-700 px-6 py-1.5 rounded-md"
                   >

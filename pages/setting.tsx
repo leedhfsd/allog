@@ -55,6 +55,9 @@ export default function Profile() {
       await fetch(`/api/article?writer=${userData.name}`, {
         method: "DELETE",
       });
+      await fetch(`/api/comment?author=${userData.name}`, {
+        method: "DELETE",
+      });
       await fetch(`/api/auth/user?email=${userData.email}`, {
         method: "DELETE",
       })
