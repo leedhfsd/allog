@@ -56,7 +56,12 @@ async function patchComment(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions);
   const body = req.body as Comment;
   const update = { $set: body };
-  const query = { _id: body._id };
+  const { id } = req.query;
+  let objectId;
+  if (typeof id === "string") {
+    objectId = new ObjectId(id);
+  }
+  const query = { _id: objectId };
 
   if (!session) {
     return res.status(401).send({ error: "Unauthorized" });

@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import "prismjs/themes/prism.css";
 import "github-markdown-css";
-import { ObjectId } from "mongodb";
 import { Article, User, Comment } from "../../interfaces";
 
 function Post({
@@ -18,7 +17,7 @@ function Post({
   const [article, setArticle] = useState<Article[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [user, setUser] = useState<User>();
-  const [isChange, setIsChange] = useState(false);
+  const [isChange, setIsChange] = useState<boolean[]>([]);
   const [isDelete, setisDelete] = useState(false);
   const commentRef = useRef<HTMLTextAreaElement>(null);
   const [comment, setComment] = useState("");
@@ -36,7 +35,7 @@ function Post({
     }
     setComment(target.value);
   };
-  const onClickComment = async () => {
+  const onClickWriteComment = async () => {
     if (comment === "") return;
     const curDate = new Date();
     const utc = curDate.getTime() + curDate.getTimezoneOffset() * 60 * 1000;
@@ -58,30 +57,86 @@ function Post({
       },
       body: JSON.stringify(postData),
     }).then(async () => {
-      setComment("");
       if (commentRef.current) {
+        setComment("");
         commentRef.current.value = "";
       }
       const res = await fetch(`/api/comment?id=${slugs[1]}`);
       const fetchComment = (await res.json()) as Comment[];
       setComments(fetchComment);
+      setIsChange([...isChange, false]);
     });
   };
-  const onClickDeleteComment = async (id: ObjectId) => {
-    const stringId = id.toString();
+  const onClickDeleteComment = async (id: string, idx: number) => {
     if (session && session.user)
-      await fetch(`/api/comment?id=${stringId}&writer=${session?.user.name}`, {
+      await fetch(`/api/comment?id=${id}&writer=${session?.user.name}`, {
         method: "DELETE",
       }).then(async () => {
         const res = await fetch(`/api/comment?id=${slugs[1]}`);
         const fetchComment = (await res.json()) as Comment[];
         setComments(fetchComment);
+        setIsChange((prev) => {
+          return prev.filter((item, index) => index !== idx);
+        });
       });
   };
+  const onChangeIsChangeStatus = (idx: number) => {
+    setIsChange((prev) => {
+      return prev.map((item, index) => {
+        if (index === idx) {
+          setComment(comments[idx].content);
+          return !prev[idx];
+        }
+        return false;
+      });
+    });
+  };
+
+  const onClickChangeComment = async (id: string) => {
+    if (comment === "") return;
+    const curDate = new Date();
+    const utc = curDate.getTime() + curDate.getTimezoneOffset() * 60 * 1000;
+    const kst = new Date(utc + 9 * 60 * 60 * 1000);
+    const patchData = {
+      writer: session?.user?.name,
+      email: session?.user?.email,
+      createdAt: `${kst.getFullYear()}년 ${
+        kst.getMonth() + 1
+      }월 ${kst.getDate()}일`,
+      profile: session?.user?.image,
+      content: comment,
+    };
+    await fetch(`/api/comment?id=${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(patchData),
+    }).then(async () => {
+      if (commentRef.current) {
+        commentRef.current.value = "";
+        setComment("");
+      }
+      const commentTextareaElement = document.getElementById(
+        "commentTextarea",
+      ) as HTMLTextAreaElement;
+      commentTextareaElement.value = "";
+      const res = await fetch(`/api/comment?id=${slugs[1]}`);
+      const fetchComment = (await res.json()) as Comment[];
+      setComments(fetchComment);
+      const booleanArr = new Array(fetchComment.length).fill(false);
+      setIsChange(booleanArr);
+    });
+  };
+
   useEffect(() => {
     setUser(userdata as User);
     setArticle(data as Article[]);
     setComments(commentData as Comment[]);
+    if (Array.isArray(commentData)) {
+      const booleanArr = new Array(commentData.length).fill(false);
+      setIsChange(booleanArr);
+    }
   }, [data, slug, userdata, commentData]);
 
   useEffect(() => {
@@ -329,6 +384,7 @@ function Post({
         {session && (
           <div className="mx-12 my-16 2xl:mx-80 3xl:mx-96">
             <textarea
+              id="commentTextarea"
               rows={1}
               className="focus:outline-none resize-none w-full truncate"
               placeholder="댓글을 남겨주세요."
@@ -339,7 +395,7 @@ function Post({
               <button
                 type="button"
                 className="text-white px-4 py-1 mt-8 bg-sky-500 rounded"
-                onClick={onClickComment}
+                onClick={onClickWriteComment}
               >
                 댓글 작성
               </button>
@@ -354,7 +410,7 @@ function Post({
             개의 댓글
           </div>
           {comments.length > 0 &&
-            comments.map((item) => (
+            comments.map((item, idx) => (
               <div key={item._id.toString()}>
                 <div className="flex justify-between">
                   <div className="flex my-8">
@@ -381,21 +437,61 @@ function Post({
                       <button
                         type="button"
                         className="text-gray-500 text-sm mx-1"
-                        onClick={() => setIsChange((value) => !value)}
+                        onClick={() => onChangeIsChangeStatus(idx)}
                       >
                         수정
                       </button>
                       <button
                         type="button"
                         className="text-gray-500 text-sm"
-                        onClick={() => onClickDeleteComment(item._id)}
+                        onClick={() =>
+                          onClickDeleteComment(item._id.toString(), idx)
+                        }
                       >
                         삭제
                       </button>
                     </div>
                   )}
                 </div>
-                <p>{item.content}</p>
+                {!isChange[idx] ? (
+                  <div
+                    id={item._id.toString()}
+                    className="whitespace-pre-wrap mb-12"
+                  >
+                    {item.content}
+                  </div>
+                ) : (
+                  <div>
+                    <textarea
+                      rows={1}
+                      className="focus:outline-none resize-none w-full truncate"
+                      placeholder="댓글을 남겨주세요."
+                      ref={commentRef}
+                      onChange={onChangeComment}
+                      value={comment}
+                    />
+                    <div className="flex justify-end">
+                      <div>
+                        <button
+                          className="text-sky-500 px-4 py-1"
+                          type="button"
+                          onClick={() => onChangeIsChangeStatus(idx)}
+                        >
+                          취소
+                        </button>
+                        <button
+                          type="button"
+                          className="text-white px-4 py-1 mt-8 bg-sky-500 rounded"
+                          onClick={() =>
+                            onClickChangeComment(item._id.toString())
+                          }
+                        >
+                          댓글 수정
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
         </div>
