@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
+import { ObjectId } from "mongodb";
 import { Comment } from "../../interfaces";
 import clientPromise from "../../lib/db/db";
 import { authOptions } from "./auth/[...nextauth]";
@@ -84,10 +85,13 @@ async function deleteComment(req: NextApiRequest, res: NextApiResponse) {
     return res.status(403).send({ error: "Forbidden" });
   }
   try {
-    await commentCollection.deleteOne({
-      _id: id,
-      writer,
-    });
+    if (typeof id === "string") {
+      const objectId = new ObjectId(id);
+      await commentCollection.deleteOne({
+        _id: objectId,
+      });
+    }
+
     return res.status(200).send({ ok: "Delete Completed" });
   } catch (err) {
     return res.status(500).send({ error: "Failed to Delete data" });

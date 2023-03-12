@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import "prismjs/themes/prism.css";
 import "github-markdown-css";
+import { ObjectId } from "mongodb";
 import { Article, User, Comment } from "../../interfaces";
 
 function Post({
@@ -17,6 +18,7 @@ function Post({
   const [article, setArticle] = useState<Article[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [user, setUser] = useState<User>();
+  const [isChange, setIsChange] = useState(false);
   const [isDelete, setisDelete] = useState(false);
   const commentRef = useRef<HTMLTextAreaElement>(null);
   const [comment, setComment] = useState("");
@@ -55,14 +57,27 @@ function Post({
         "Content-Type": "application/json",
       },
       body: JSON.stringify(postData),
-    }).then(() => {
+    }).then(async () => {
       setComment("");
       if (commentRef.current) {
         commentRef.current.value = "";
       }
+      const res = await fetch(`/api/comment?id=${slugs[1]}`);
+      const fetchComment = (await res.json()) as Comment[];
+      setComments(fetchComment);
     });
   };
-
+  const onClickDeleteComment = async (id: ObjectId) => {
+    const stringId = id.toString();
+    if (session && session.user)
+      await fetch(`/api/comment?id=${stringId}&writer=${session?.user.name}`, {
+        method: "DELETE",
+      }).then(async () => {
+        const res = await fetch(`/api/comment?id=${slugs[1]}`);
+        const fetchComment = (await res.json()) as Comment[];
+        setComments(fetchComment);
+      });
+  };
   useEffect(() => {
     setUser(userdata as User);
     setArticle(data as Article[]);
@@ -323,7 +338,7 @@ function Post({
             <div className="flex justify-end">
               <button
                 type="button"
-                className="text-white px-6 py-1 mt-8 bg-sky-500 rounded"
+                className="text-white px-4 py-1 mt-8 bg-sky-500 rounded"
                 onClick={onClickComment}
               >
                 댓글 작성
@@ -340,7 +355,7 @@ function Post({
           </div>
           {comments.length > 0 &&
             comments.map((item) => (
-              <div>
+              <div key={item._id.toString()}>
                 <div className="flex justify-between">
                   <div className="flex my-8">
                     <Link href={`/article/@${item.writer}`}>
@@ -353,23 +368,32 @@ function Post({
                       />
                     </Link>
                     <div className="flex flex-col mx-4">
-                      <div className="font-bold">{item.writer}</div>
+                      <Link href={`/article/@${item.writer}`}>
+                        <div className="font-bold">{item.writer}</div>
+                      </Link>
                       <div className="text-gray-500 text-sm">
                         {item.createdAt}
                       </div>
                     </div>
                   </div>
-                  <div className="flex">
-                    <button
-                      type="button"
-                      className="text-gray-500 text-sm mx-1"
-                    >
-                      수정
-                    </button>
-                    <button type="button" className="text-gray-500 text-sm">
-                      삭제
-                    </button>
-                  </div>
+                  {item.writer === session?.user?.name && (
+                    <div className="flex">
+                      <button
+                        type="button"
+                        className="text-gray-500 text-sm mx-1"
+                        onClick={() => setIsChange((value) => !value)}
+                      >
+                        수정
+                      </button>
+                      <button
+                        type="button"
+                        className="text-gray-500 text-sm"
+                        onClick={() => onClickDeleteComment(item._id)}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <p>{item.content}</p>
               </div>

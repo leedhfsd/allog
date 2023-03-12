@@ -27,7 +27,7 @@ export interface User {
 }
 
 export interface Comment {
-  _id?: ObjectId;
+  _id: ObjectId;
   articleId: number;
   writer: string;
   email: string;
