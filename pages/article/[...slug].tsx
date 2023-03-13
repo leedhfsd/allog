@@ -138,7 +138,7 @@ function Post({
       const booleanArr = new Array(commentData.length).fill(false);
       setIsChange(booleanArr);
     }
-  }, [data, slug, userdata, commentData]);
+  }, [data, userdata, commentData]);
 
   useEffect(() => {
     if (
@@ -388,8 +388,14 @@ function Post({
             </div>
           </div>
         ))}
+        <div className="mt-48 mx-12 2xl:mx-80 3xl:mx-96 text-xl text-gray-600">
+          <span className="font-bold text-black">
+            {comments.length ? comments.length : 0}
+          </span>
+          개의 댓글
+        </div>
         {session && (
-          <div className="mx-12 my-16 2xl:mx-80 3xl:mx-96">
+          <div className="mx-12 my-12 2xl:mx-80 3xl:mx-96">
             <textarea
               id="commentTextarea"
               rows={1}
@@ -409,13 +415,7 @@ function Post({
             </div>
           </div>
         )}
-        <div className="mx-12 my-16 2xl:mx-80 3xl:mx-96">
-          <div className="my-12 text-xl text-gray-600">
-            <span className="font-bold text-black">
-              {comments.length ? comments.length : 0}
-            </span>
-            개의 댓글
-          </div>
+        <div className="mx-12 2xl:mx-80 3xl:mx-96 mb-32">
           {comments.length > 0 &&
             comments.map((item, idx) => (
               <div key={item._id.toString()}>
@@ -580,7 +580,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (slug && slug.length === 1) {
     writer = encodeURIComponent(slug[0].substring(1));
     articleData = await fetch(
-      `${process.env.BASE_URL}/api/article?writer=${writer}`,
+      `${process.env.BASE_URL}/api/article?writer=${writer}&status=false`,
     );
     res = await fetch(`${process.env.BASE_URL}/api/auth/user?name=${writer}`);
   } else if (slug && slug.length > 1) {

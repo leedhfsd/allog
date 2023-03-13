@@ -8,14 +8,32 @@ async function getAritcleByWriter(
   req: NextApiRequest,
   res: NextApiResponse,
   writer: string,
+  status: string,
 ) {
   const client = await clientPromise;
   const database = client.db();
   const articleCollection = database.collection("articleDB");
   let data: WithId<Document>[] = [];
+
+  if (status === "true") {
+    try {
+      const fetchData = await articleCollection
+        .find({ writer })
+        .sort({ _id: -1 })
+        .toArray();
+      data = fetchData;
+      if (data.length > 0) {
+        return res.status(200).send(data);
+      }
+      return res.status(404).send({ error: "404 Not Found" });
+    } catch (err) {
+      return res.status(500).send({ error: "Failed to fetch data" });
+    }
+  }
+
   try {
     const fetchData = await articleCollection
-      .find({ writer })
+      .find({ $and: [{ writer }, { disclosureStatus: false }] })
       .sort({ _id: -1 })
       .toArray();
     data = fetchData;
@@ -61,10 +79,13 @@ async function getArticleByHashtag(
   const client = await clientPromise;
   const database = client.db();
   const articleCollection = database.collection("articleDB");
-  let data: WithId<Document>[] = [];
+  let data = [];
   try {
-    const fetchData = await articleCollection.find({ hashtag }).toArray();
+    const fetchData = await articleCollection
+      .find({ $and: [{ hashtag }, { disclosureStatus: false }] })
+      .toArray();
     data = fetchData;
+
     if (data.length > 0) {
       return res.status(200).send(data);
     }
@@ -86,14 +107,19 @@ async function getArticleByAll(
   try {
     const fetchData = await articleCollection
       .find({
-        $or: [
-          { hashtag: all },
-          { writer: all },
-          { title: { $regex: `${all}`, $options: "i" } },
+        $and: [
+          {
+            $or: [
+              { hashtag: all },
+              { writer: all },
+              { title: { $regex: `${all}`, $options: "i" } },
+            ],
+          },
+          { disclosureStatus: false },
         ],
       })
       .toArray();
-    data = fetchData;
+    if (fetchData.length > 0) data = fetchData;
     if (data.length > 0) {
       return res.status(200).send(data);
     }
@@ -149,7 +175,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { writer, id, hashtag, all } = req.query;
+  const { writer, id, hashtag, all, status } = req.query;
   switch (req.method) {
     case "GET":
       if (typeof hashtag === "string") {
@@ -163,8 +189,8 @@ export default async function handler(
       if (typeof writer === "string" && typeof id === "string") {
         await getAritcleByID(req, res, decodeURIComponent(writer), id);
         break;
-      } else if (typeof writer === "string") {
-        await getAritcleByWriter(req, res, decodeURIComponent(writer));
+      } else if (typeof writer === "string" && typeof status === "string") {
+        await getAritcleByWriter(req, res, decodeURIComponent(writer), status);
         break;
       }
       break;

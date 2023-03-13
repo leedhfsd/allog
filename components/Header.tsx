@@ -109,7 +109,7 @@ export default function Header() {
                 className="text-base border-black cursor-pointer"
                 ref={listRef}
               >
-                <Link href={`/article/@${user.name}`}>
+                <Link href={`/mypage/@${user.name}`}>
                   <li
                     aria-hidden="true"
                     className="py-3 px-4 hover:text-sky-500"

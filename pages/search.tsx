@@ -47,51 +47,57 @@ export default function Search() {
       <section className="">
         {isClicked && (
           <div className="text-gray-600">
-            총<span className="font-bold mx-1">{article.length}개</span>의
-            작성글을 찾았습니다.
+            총
+            <span className="font-bold mx-1">
+              {article.length ? article.length : 0}개
+            </span>
+            의 작성글을 찾았습니다.
           </div>
         )}
-        {article.map((post) => (
-          <div className="my-8 md:w-[768px]" key={post._id}>
-            <div className="flex flex-row items-center mb-8">
-              <img
-                className="rounded-full bg-white h-12 w-12 bg-cover mr-1 inline"
-                alt="profile"
-                src={post.profile}
-              />
-              <span className="mx-2 text-sm font-bold">{post.writer}</span>
+        {Array.isArray(article) &&
+          article.map((post) => (
+            <div className="my-8 md:w-[768px]" key={post._id}>
+              <div className="flex flex-row items-center mb-8">
+                <img
+                  className="rounded-full bg-white h-12 w-12 bg-cover mr-1 inline"
+                  alt="profile"
+                  src={post.profile}
+                />
+                <span className="mx-2 text-sm font-bold">{post.writer}</span>
+              </div>
+              <Link href={`/article/@${post.writer}/${post._id}/${post.slug}`}>
+                <img
+                  alt="sample"
+                  className="rounded-md inline-block w-full"
+                  src="/sample.gif"
+                />
+                <h1 className="text-2xl font-bold my-4 truncate">
+                  {post.title}
+                </h1>
+                <p className="text-base mb-8 line_clamp whitespace-pre-wrap">
+                  {post.content}
+                </p>
+              </Link>
+              <div>
+                {post.hashtag.map((item) => {
+                  return (
+                    <a
+                      key={item}
+                      href={`/hashtag/${item}`}
+                      className="text-sky-500 px-1 mx-2 my-4 cursor-pointer inline-block text-base"
+                    >
+                      {item}
+                    </a>
+                  );
+                })}
+              </div>
+              <div className="flex flex-row truncate text-sm text-gray-400">
+                <div className="">{post.createdAt}</div>
+                <span className="px-2">·</span>
+                <div>❤ {post.liked}</div>
+              </div>
             </div>
-            <Link href={`/article/@${post.writer}/${post._id}/${post.slug}`}>
-              <img
-                alt="sample"
-                className="rounded-md inline-block w-full"
-                src="/sample.gif"
-              />
-              <h1 className="text-2xl font-bold my-4 truncate">{post.title}</h1>
-              <p className="text-base mb-8 line_clamp whitespace-pre-wrap">
-                {post.content}
-              </p>
-            </Link>
-            <div>
-              {post.hashtag.map((item) => {
-                return (
-                  <a
-                    key={item}
-                    href={`/hashtag/${item}`}
-                    className="text-sky-500 px-1 mx-2 my-4 cursor-pointer inline-block text-base"
-                  >
-                    {item}
-                  </a>
-                );
-              })}
-            </div>
-            <div className="flex flex-row truncate text-sm text-gray-400">
-              <div className="">{post.createdAt}</div>
-              <span className="px-2">·</span>
-              <div>❤ {post.liked}</div>
-            </div>
-          </div>
-        ))}
+          ))}
       </section>
     </div>
   );

@@ -8,6 +8,9 @@ export default async function handler(
   const client = await clientPromise;
   const database = client.db();
   const articleCollection = database.collection("articleDB");
-  const data = await articleCollection.find().sort({ _id: -1 }).toArray();
+  const data = await articleCollection
+    .find({ disclosureStatus: false })
+    .sort({ _id: -1 })
+    .toArray();
   res.status(200).send(data);
 }
