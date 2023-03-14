@@ -17,10 +17,9 @@ function Post({
   const [article, setArticle] = useState<Article[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [user, setUser] = useState<User>();
-  const [liked, setLiked] = useState<number[]>([]);
   const [isChange, setIsChange] = useState<boolean[]>([]);
   const [isDelete, setisDelete] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+  const [liked, setLiked] = useState<string[]>([]);
   const commentRef = useRef<HTMLTextAreaElement>(null);
   const [comment, setComment] = useState("");
   const { data: session } = useSession();
@@ -94,13 +93,29 @@ function Post({
       });
     });
   };
-  const onClickLikedPost = async () => {
+  const onClickAddLikedPost = async () => {
     if (typeof user !== "undefined") {
-      setIsLiked(true);
+      if (liked.indexOf(user.name) === -1) {
+        setLiked([...liked, user.name]);
+      }
       await fetch(
         `/api/liked?name=${user.name}&id=${article[0]._id}&status=posts`,
         {
           method: "POST",
+        },
+      );
+    }
+  };
+
+  const onClickRemoveLikedPost = async () => {
+    if (typeof user !== "undefined") {
+      if (liked.indexOf(user.name) !== -1) {
+        setLiked(liked.filter((item) => item !== user.name));
+      }
+      await fetch(
+        `/api/liked?name=${user.name}&id=${article[0]._id}&status=posts`,
+        {
+          method: "DELETE",
         },
       );
     }
@@ -147,15 +162,14 @@ function Post({
     setUser(userdata as User);
     setArticle(data as Article[]);
     setComments(commentData as Comment[]);
-    if (Array.isArray(data)) {
-      const numberArr = new Array(data.length).fill(0);
-      setLiked(numberArr);
+    if (article.length > 0) {
+      setLiked(article[0].liked);
     }
     if (Array.isArray(commentData)) {
       const booleanArr = new Array(commentData.length).fill(false);
       setIsChange(booleanArr);
     }
-  }, [data, userdata, commentData]);
+  }, [data, userdata, commentData, article]);
 
   useEffect(() => {
     if (
@@ -359,10 +373,21 @@ function Post({
                     </div>
                   )}
                 <span>
-                  <button type="button" onClick={onClickLikedPost}>
-                    ❤
-                  </button>
-                  {post.liked.length ? post.liked.length : 0}
+                  {session?.user && liked.indexOf(session.user.name) === -1 ? (
+                    <div>
+                      <button type="button" onClick={onClickAddLikedPost}>
+                        🤍
+                      </button>
+                      <span>{liked.length}</span>
+                    </div>
+                  ) : (
+                    <div>
+                      <button type="button" onClick={onClickRemoveLikedPost}>
+                        ❤
+                      </button>
+                      <span>{liked.length}</span>
+                    </div>
+                  )}
                 </span>
               </div>
             </div>
