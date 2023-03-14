@@ -120,7 +120,9 @@ export default function Header() {
                 <li className="md:hidden py-3 px-4 hover:text-sky-500">
                   새 글 작성
                 </li>
-                <li className="py-3 px-4 hover:text-sky-500">즐겨찾기</li>
+                <Link href="/liked/posts">
+                  <li className="py-3 px-4 hover:text-sky-500">좋아요 목록</li>
+                </Link>
                 <Link href="/setting">
                   <li className="py-3 px-4 hover:text-sky-500">설정</li>
                 </Link>

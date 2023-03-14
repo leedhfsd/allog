@@ -40,7 +40,7 @@ async function postData(req: NextApiRequest, res: NextApiResponse) {
     content: formData.content,
     hashtag: formData.hashtag,
     createdAt: formData.createdAt,
-    liked: 0,
+    liked: [],
     writer: formData.writer,
     profile: formData.profile,
     slug: formData.slug,

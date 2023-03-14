@@ -6,7 +6,7 @@ export interface Article {
   content: string;
   hashtag: string[];
   createdAt: string;
-  liked: number;
+  liked: string[];
   writer: string;
   profile: string;
   slug: string;

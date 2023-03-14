@@ -17,8 +17,10 @@ function Post({
   const [article, setArticle] = useState<Article[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [user, setUser] = useState<User>();
+  const [liked, setLiked] = useState<number[]>([]);
   const [isChange, setIsChange] = useState<boolean[]>([]);
   const [isDelete, setisDelete] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
   const commentRef = useRef<HTMLTextAreaElement>(null);
   const [comment, setComment] = useState("");
   const { data: session } = useSession();
@@ -92,6 +94,17 @@ function Post({
       });
     });
   };
+  const onClickLikedPost = async () => {
+    if (typeof user !== "undefined") {
+      setIsLiked(true);
+      await fetch(
+        `/api/liked?name=${user.name}&id=${article[0]._id}&status=posts`,
+        {
+          method: "POST",
+        },
+      );
+    }
+  };
 
   const onClickChangeComment = async (id: string) => {
     if (comment === "") return;
@@ -134,6 +147,10 @@ function Post({
     setUser(userdata as User);
     setArticle(data as Article[]);
     setComments(commentData as Comment[]);
+    if (Array.isArray(data)) {
+      const numberArr = new Array(data.length).fill(0);
+      setLiked(numberArr);
+    }
     if (Array.isArray(commentData)) {
       const booleanArr = new Array(commentData.length).fill(false);
       setIsChange(booleanArr);
@@ -244,7 +261,7 @@ function Post({
                   <div className="flex flex-row truncate text-sm text-gray-400">
                     <div className="">{post.createdAt}</div>
                     <span className="px-2">·</span>
-                    <div>❤ {post.liked}</div>
+                    <div>❤ {post.liked.length ? post.liked.length : 0}</div>
                     <span className="px-2">·</span>
                     <div className="bg-[#333333] text-white pl-2 pr-4 rounded">
                       🗝 비공개
@@ -287,7 +304,7 @@ function Post({
                 <div className="flex flex-row truncate text-sm text-gray-400">
                   <div className="">{post.createdAt}</div>
                   <span className="px-2">·</span>
-                  <div>❤ {post.liked}</div>
+                  <div>❤ {post.liked.length ? post.liked.length : 0}</div>
                 </div>
               </div>
             ))}
@@ -341,7 +358,12 @@ function Post({
                       </button>
                     </div>
                   )}
-                <span>❤ {post.liked}</span>
+                <span>
+                  <button type="button" onClick={onClickLikedPost}>
+                    ❤
+                  </button>
+                  {post.liked.length ? post.liked.length : 0}
+                </span>
               </div>
             </div>
             <div>

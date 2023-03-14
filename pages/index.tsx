@@ -69,7 +69,7 @@ export default function Home() {
                     {article.writer}
                   </span>
                 </div>
-                <span>❤ {article.liked}</span>
+                <span>❤ {article.liked.length ? article.liked.length : 0}</span>
               </div>
             </div>
           </Link>
