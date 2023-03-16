@@ -36,3 +36,11 @@ export interface Comment {
   content: string;
   profile: string;
 }
+
+export interface Like {
+  _id: ObjectId;
+  name: string;
+  posts: string[];
+  users: string[];
+  likesMe: string[];
+}

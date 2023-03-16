@@ -1,3 +1,4 @@
+import type { WithId, Document } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import clientPromise from "../../lib/db/db";
@@ -66,9 +67,38 @@ async function postLikedUser(
         upsert: true,
       },
     );
+    await likedCollection.updateOne(
+      { name: user },
+      { $addToSet: { likesMe: name } },
+      {
+        upsert: true,
+      },
+    );
     return res.status(200).send({ ok: "Post Completed" });
   } catch (err) {
     return res.status(500).send({ error: "Failed to Post liked" });
+  }
+}
+
+async function getLikedByName(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  name: string,
+) {
+  const client = await clientPromise;
+  const database = client.db();
+  const likedCollection = database.collection("likedDB");
+  let data: WithId<Document>[] = [];
+
+  try {
+    const fetchData = await likedCollection.find({ name }).toArray();
+    if (fetchData.length > 0) data = fetchData;
+    if (data.length > 0) {
+      return res.status(200).send(data);
+    }
+    return res.status(404).send({ error: "404 Not Found" });
+  } catch (err) {
+    return res.status(500).send({ error: "Failed to fetch data" });
   }
 }
 
@@ -135,6 +165,13 @@ async function deleteLikedUser(
         upsert: true,
       },
     );
+    await likedCollection.updateOne(
+      { name: user },
+      { $pull: { likesMe: name } },
+      {
+        upsert: true,
+      },
+    );
     return res.status(200).send({ ok: "Delete Completed" });
   } catch (err) {
     return res.status(500).send({ error: "Failed to delete liked" });
@@ -162,6 +199,12 @@ export default async function handler(
         typeof user === "string"
       ) {
         await postLikedUser(req, res, name, user);
+        break;
+      }
+      break;
+    case "GET":
+      if (typeof name === "string") {
+        await getLikedByName(req, res, name);
         break;
       }
       break;

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import "prismjs/themes/prism.css";
 import "github-markdown-css";
-import { Article, User, Comment } from "../../interfaces";
+import { Article, User, Comment, Like } from "../../interfaces";
 
 function Post({
   data,
@@ -19,7 +19,8 @@ function Post({
   const [user, setUser] = useState<User>();
   const [isChange, setIsChange] = useState<boolean[]>([]);
   const [isDelete, setisDelete] = useState(false);
-  const [liked, setLiked] = useState<string[]>([]);
+  const [likedPost, setLikedPost] = useState<string[]>([]);
+  const [likedUser, setLikedUser] = useState<string[]>([]);
   const commentRef = useRef<HTMLTextAreaElement>(null);
   const [comment, setComment] = useState("");
   const { data: session } = useSession();
@@ -94,12 +95,39 @@ function Post({
     });
   };
   const onClickAddLikedPost = async () => {
-    if (typeof user !== "undefined") {
-      if (liked.indexOf(user.name) === -1) {
-        setLiked([...liked, user.name]);
+    if (typeof user !== "undefined" && session?.user) {
+      if (likedPost.indexOf(session?.user.name) === -1) {
+        setLikedPost([...likedPost, session?.user.name]);
       }
       await fetch(
-        `/api/liked?name=${user.name}&id=${article[0]._id}&status=posts`,
+        `/api/liked?name=${session?.user.name}&id=${article[0]._id}&status=posts`,
+        {
+          method: "POST",
+        },
+      );
+    }
+  };
+  const onClickRemoveLikedPost = async () => {
+    if (typeof user !== "undefined" && session?.user) {
+      const tmp = session?.user.name;
+      if (likedPost.indexOf(session?.user.name) !== -1) {
+        setLikedPost(likedPost.filter((item) => item !== tmp));
+      }
+      await fetch(
+        `/api/liked?name=${session?.user.name}&id=${article[0]._id}&status=posts`,
+        {
+          method: "DELETE",
+        },
+      );
+    }
+  };
+  const onClickAddLikedUser = async () => {
+    if (typeof user !== "undefined" && session?.user) {
+      if (likedUser.indexOf(session?.user.name) === -1) {
+        setLikedUser([...likedUser, session?.user.name]);
+      }
+      await fetch(
+        `/api/liked?name=${session?.user.name}&user=${user.name}&status=users`,
         {
           method: "POST",
         },
@@ -107,13 +135,14 @@ function Post({
     }
   };
 
-  const onClickRemoveLikedPost = async () => {
-    if (typeof user !== "undefined") {
-      if (liked.indexOf(user.name) !== -1) {
-        setLiked(liked.filter((item) => item !== user.name));
+  const onClickRemoveLikedUser = async () => {
+    if (typeof user !== "undefined" && session?.user) {
+      const tmp = session?.user.name;
+      if (likedUser.indexOf(session?.user.name) !== -1) {
+        setLikedUser(likedUser.filter((item) => item !== tmp));
       }
       await fetch(
-        `/api/liked?name=${user.name}&id=${article[0]._id}&status=posts`,
+        `/api/liked?name=${session?.user.name}&user=${user.name}&status=users`,
         {
           method: "DELETE",
         },
@@ -163,14 +192,23 @@ function Post({
     setArticle(data as Article[]);
     setComments(commentData as Comment[]);
     if (article.length > 0) {
-      setLiked(article[0].liked);
+      setLikedPost(article[0].liked);
     }
     if (Array.isArray(commentData)) {
       const booleanArr = new Array(commentData.length).fill(false);
       setIsChange(booleanArr);
     }
-  }, [data, userdata, commentData, article]);
-
+    async function fetchLikes(name: string) {
+      const res = await fetch(`/api/liked?name=${name}`);
+      const likesData = (await res.json()) as Like[];
+      if (Array.isArray(likesData[0].likesMe)) {
+        setLikedUser([...likesData[0].likesMe]);
+      }
+    }
+    fetchLikes(slugs[0].substring(1)).catch(() => {
+      throw new Error();
+    });
+  }, [data, userdata, commentData, article, slugs]);
   useEffect(() => {
     if (
       slugs &&
@@ -196,7 +234,6 @@ function Post({
       },
     ).then(() => redirect());
   };
-
   if (slugs.length === 1 && article.length > 0) {
     return (
       <div className="flex flex-col py-12 items-center w-full">
@@ -209,14 +246,34 @@ function Post({
           <meta name="keywords" content="BLOG, 블로그, Allog" />
         </Head>
         <div className="flex flex-col items-center">
-          <div className="flex flex-row items-center mb-8">
-            <img
-              className="rounded-full mr-6"
-              src={article[article.length - 1].profile}
-              width={128}
-              height={128}
-              alt="user-profile"
-            />
+          <div className="flex flex-row items-center mb-4">
+            <div>
+              <img
+                className="rounded-full mr-6"
+                src={article[article.length - 1].profile}
+                width={128}
+                height={128}
+                alt="user-profile"
+              />
+              <span>
+                {session?.user &&
+                likedUser.indexOf(session.user.name) === -1 ? (
+                  <div className="text-center mr-6 mt-2">
+                    <button type="button" onClick={onClickAddLikedUser}>
+                      🤍
+                    </button>
+                    <span>{likedUser.length}</span>
+                  </div>
+                ) : (
+                  <div className="text-center mr-6 mt-2">
+                    <button type="button" onClick={onClickRemoveLikedUser}>
+                      ❤
+                    </button>
+                    <span>{likedUser.length}</span>
+                  </div>
+                )}
+              </span>
+            </div>
             <div>
               {user && user.nickname !== "" ? (
                 <div className="text-2xl font-bold">{user?.nickname}</div>
@@ -373,19 +430,20 @@ function Post({
                     </div>
                   )}
                 <span>
-                  {session?.user && liked.indexOf(session.user.name) === -1 ? (
+                  {session?.user &&
+                  likedPost.indexOf(session.user.name) === -1 ? (
                     <div>
                       <button type="button" onClick={onClickAddLikedPost}>
                         🤍
                       </button>
-                      <span>{liked.length}</span>
+                      <span>{likedPost.length}</span>
                     </div>
                   ) : (
                     <div>
                       <button type="button" onClick={onClickRemoveLikedPost}>
                         ❤
                       </button>
-                      <span>{liked.length}</span>
+                      <span>{likedPost.length}</span>
                     </div>
                   )}
                 </span>
