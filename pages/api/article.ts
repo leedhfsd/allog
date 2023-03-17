@@ -46,7 +46,7 @@ async function getAritcleByWriter(
   }
 }
 
-async function getAritcleByID(
+async function getAritcleByWriterAndId(
   req: NextApiRequest,
   res: NextApiResponse,
   writer: string,
@@ -171,6 +171,36 @@ async function deleteArticle(
   return res.status(500).send({ error: "Not allowed query" });
 }
 
+async function getArticleByIdArr(req: NextApiRequest, res: NextApiResponse) {
+  const client = await clientPromise;
+  const database = client.db();
+  const articleCollection = database.collection("articleDB");
+  let { id } = req.query;
+  let arr: number[] = [];
+  if (typeof id === "string") {
+    id = [id];
+  }
+  if (typeof id !== "undefined") {
+    arr = id.map((item) => Number(item));
+  }
+  let data: WithId<Document>[] = [];
+  try {
+    const fetchData = await articleCollection
+      .find({
+        $and: [{ _id: { $in: arr } }, { disclosureStatus: false }],
+      })
+      .sort({ _id: -1 })
+      .toArray();
+    data = fetchData;
+    if (data.length > 0) {
+      return res.status(200).send(data);
+    }
+    return res.status(404).send({ error: "404 Not Found" });
+  } catch (err) {
+    return res.status(500).send({ error: "Failed to fetch data" });
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -178,6 +208,10 @@ export default async function handler(
   const { writer, id, hashtag, all, status } = req.query;
   switch (req.method) {
     case "GET":
+      if (typeof status === "string" && status === "arr") {
+        await getArticleByIdArr(req, res);
+        break;
+      }
       if (typeof hashtag === "string") {
         await getArticleByHashtag(req, res, hashtag);
         break;
@@ -187,7 +221,7 @@ export default async function handler(
         break;
       }
       if (typeof writer === "string" && typeof id === "string") {
-        await getAritcleByID(req, res, decodeURIComponent(writer), id);
+        await getAritcleByWriterAndId(req, res, decodeURIComponent(writer), id);
         break;
       } else if (typeof writer === "string" && typeof status === "string") {
         await getAritcleByWriter(req, res, decodeURIComponent(writer), status);

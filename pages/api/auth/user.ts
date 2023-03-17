@@ -1,3 +1,4 @@
+import { WithId, Document } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { User } from "../../../interfaces";
@@ -101,12 +102,47 @@ async function patchUser(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
+async function getUserByArr(req: NextApiRequest, res: NextApiResponse) {
+  const client = await clientPromise;
+  const database = client.db();
+  const usersCollection = database.collection("users");
+  let { name } = req.query;
+  let arr: string[] = [];
+  if (typeof name === "string") {
+    name = [name];
+  }
+  if (typeof name !== "undefined") {
+    arr = name;
+  }
+  let data: WithId<Document>[] = [];
+  try {
+    const fetchData = await usersCollection
+      .find({
+        name: { $in: arr },
+      })
+      .sort({ _id: -1 })
+      .toArray();
+    data = fetchData;
+    if (data.length > 0) {
+      return res.status(200).send(data);
+    }
+    return res.status(404).send({ error: "404 Not Found" });
+  } catch (err) {
+    return res.status(500).send({ error: "Failed to fetch data" });
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const { status } = req.query;
   switch (req.method) {
     case "GET":
+      if (typeof status === "string" && status === "arr") {
+        await getUserByArr(req, res);
+        break;
+      }
       await getUser(req, res);
       break;
     case "POST":
