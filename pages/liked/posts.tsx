@@ -69,8 +69,10 @@ export default function Posts() {
                 <Link
                   href={`/article/@${item.writer}/${item._id}/${item.slug}`}
                 >
-                  <h1 className="font-bold text-xl my-1">{item.title}</h1>
-                  <p className="mb-2 line_clamp whitespace-pre-wrap min-h-[80px] text-[#666666]">
+                  <h1 className="hover:underline font-bold text-xl my-1">
+                    {item.title}
+                  </h1>
+                  <p className="mb-2 line_clamp whitespace-pre-wrap min-h-[78px] text-[#666666]">
                     {item.content}
                   </p>
                   <div className="flex text-sm">
