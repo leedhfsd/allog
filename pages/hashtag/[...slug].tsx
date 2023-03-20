@@ -36,7 +36,7 @@ function Hashtag({
             작성글을 찾았습니다.
           </div>
           {article.map((post) => (
-            <div className="my-8 md:w-[768px]" key={post._id}>
+            <div className="my-8 w-[400px] md:w-[768px]" key={post._id}>
               <div className="flex flex-row items-center mb-8">
                 <Link href={`/article/@${post.writer}`}>
                   <img
@@ -48,11 +48,17 @@ function Hashtag({
                 </Link>
               </div>
               <Link href={`/article/@${post.writer}/${post._id}/${post.slug}`}>
-                <img
-                  alt="sample"
-                  className="rounded-md inline-block w-full"
-                  src="/sample.gif"
-                />
+                {post.thumbnailImage ? (
+                  <div className="h-[400px]">
+                    <img
+                      alt="thumbnail"
+                      className="rounded-md inline-block w-full h-full object-center object-cover"
+                      src={post.thumbnailImage}
+                    />
+                  </div>
+                ) : (
+                  <div />
+                )}
                 <h1 className="text-2xl font-bold my-4 truncate">
                   {post.title}
                 </h1>

@@ -102,6 +102,25 @@ async function patchUser(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
+async function patchUserImage(req: NextApiRequest, res: NextApiResponse) {
+  const client = await clientPromise;
+  const database = client.db();
+  const usersCollection = database.collection("users");
+  const { email, image } = req.query;
+  const update = { $set: { image } };
+  const query = { email };
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    return res.status(401).send({ error: "Unauthorized" });
+  }
+  try {
+    await usersCollection.updateOne(query, update);
+    return res.status(200).send({ ok: "Patch Compledted" });
+  } catch (err) {
+    return res.status(500).send({ error: "failed to patch data" });
+  }
+}
+
 async function getUserByArr(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
   const database = client.db();
@@ -136,7 +155,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { status } = req.query;
+  const { status, image } = req.query;
   switch (req.method) {
     case "GET":
       if (typeof status === "string" && status === "arr") {
@@ -149,6 +168,10 @@ export default async function handler(
       await postUser(req, res);
       break;
     case "PATCH":
+      if (typeof image === "string") {
+        await patchUserImage(req, res);
+        break;
+      }
       await patchUser(req, res);
       break;
     case "DELETE":

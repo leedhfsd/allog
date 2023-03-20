@@ -41,7 +41,7 @@ export default function Header() {
     <header>
       <div className="flex justify-between items-center">
         <div>
-          <Link className="text-3xl tracking-wider font-eng" href="/">
+          <Link className="text-3xl tracking-wider font-serif" href="/">
             Allog
           </Link>
         </div>

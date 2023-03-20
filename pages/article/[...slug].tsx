@@ -198,17 +198,24 @@ function Post({
       const booleanArr = new Array(commentData.length).fill(false);
       setIsChange(booleanArr);
     }
+  }, [data, userdata, commentData, article]);
+
+  useEffect(() => {
     async function fetchLikes(name: string) {
       const res = await fetch(`/api/liked?name=${name}`);
       const likesData = (await res.json()) as Like[];
-      if (Array.isArray(likesData[0].likesMe)) {
+      if (
+        Array.isArray(likesData) &&
+        typeof likesData[0].likesMe !== "undefined"
+      ) {
         setLikedUser([...likesData[0].likesMe]);
       }
     }
     fetchLikes(slugs[0].substring(1)).catch(() => {
       throw new Error();
     });
-  }, [data, userdata, commentData, article, slugs]);
+  }, [slugs]);
+
   useEffect(() => {
     if (
       slugs &&
@@ -249,8 +256,8 @@ function Post({
           <div className="flex flex-row items-center mb-4">
             <div>
               <img
-                className="rounded-full mr-6"
-                src={article[article.length - 1].profile}
+                className="rounded-full mr-6 aspect-square"
+                src={user?.image}
                 width={128}
                 height={128}
                 alt="user-profile"
@@ -262,14 +269,12 @@ function Post({
                     <button type="button" onClick={onClickAddLikedUser}>
                       🤍
                     </button>
-                    <span>{likedUser.length}</span>
                   </div>
                 ) : (
                   <div className="text-center mr-6 mt-2">
                     <button type="button" onClick={onClickRemoveLikedUser}>
                       ❤
                     </button>
-                    <span>{likedUser.length}</span>
                   </div>
                 )}
               </span>
@@ -300,15 +305,21 @@ function Post({
             article
               .filter((post) => post.disclosureStatus)
               .map((post) => (
-                <div className="my-8 md:w-[768px]" key={post._id}>
+                <div className="my-8 w-[400px] md:w-[768px]" key={post._id}>
                   <Link
                     href={`/article/@${post.writer}/${post._id}/${post.slug}`}
                   >
-                    <img
-                      alt="sample"
-                      className="rounded-md inline-block w-full"
-                      src="/sample.gif"
-                    />
+                    {post.thumbnailImage ? (
+                      <div className="h-[400px]">
+                        <img
+                          alt="thumbnail"
+                          className="rounded-md inline-block w-full h-full object-center object-cover"
+                          src={post.thumbnailImage}
+                        />
+                      </div>
+                    ) : (
+                      <div />
+                    )}
                     <h1 className="text-2xl font-bold my-4 truncate">
                       {post.title}
                     </h1>
@@ -343,15 +354,21 @@ function Post({
           {article
             .filter((post) => !post.disclosureStatus)
             .map((post) => (
-              <div className="my-8 md:w-[768px]" key={post._id}>
+              <div className="my-8 w-[400px] md:w-[768px]" key={post._id}>
                 <Link
                   href={`/article/@${post.writer}/${post._id}/${post.slug}`}
                 >
-                  <img
-                    alt="sample"
-                    className="rounded-md inline-block w-full"
-                    src="/sample.gif"
-                  />
+                  {post.thumbnailImage ? (
+                    <div className="h-[400px]">
+                      <img
+                        alt="thumbnail"
+                        className="rounded-md inline-block w-full h-full object-center object-cover"
+                        src={post.thumbnailImage}
+                      />
+                    </div>
+                  ) : (
+                    <div />
+                  )}
                   <h1 className="text-2xl font-bold my-4 truncate">
                     {post.title}
                   </h1>
@@ -475,10 +492,10 @@ function Post({
                 className="flex flex-row items-center"
               >
                 <img
-                  className="rounded-full mr-4"
-                  src={post.profile}
+                  className="rounded-full mr-4 aspect-square"
+                  src={user?.image}
                   width={128}
-                  height={127}
+                  height={128}
                   alt="user-profile"
                 />
                 <div className="flex flex-col">

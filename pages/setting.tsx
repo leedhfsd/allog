@@ -12,6 +12,7 @@ export default function Profile() {
   const [nickname, setNickname] = useState("");
   const [userData, setUserData] = useState<User>();
   const [isDelete, setisDelete] = useState(false);
+  const [image, setImage] = useState("");
   const router = useRouter();
   const redirect = async () => {
     await router.push("/auth/goodbye");
@@ -33,9 +34,10 @@ export default function Profile() {
       });
   }, [user]);
   useEffect(() => {
-    if (userData && userData.nickname && userData.userinfo) {
+    if (userData && userData.nickname && userData.userinfo && userData.image) {
       setNickname(userData.nickname);
       setUserinfo(userData.userinfo);
+      setImage(userData.image);
     }
   }, [userData]);
 
@@ -49,6 +51,35 @@ export default function Profile() {
   const onChangenickname = (e: SyntheticEvent) => {
     const target = e.target as HTMLInputElement;
     setNickname(target.value);
+  };
+  const imageUploader = async (file) => {
+    alert("변경 완료후 로그아웃 됩니다. 다시 로그인해주세요.");
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append(
+      "upload_preset",
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS,
+    );
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
+    return res.json();
+  };
+
+  const onChangeImagefile = async (e) => {
+    const uploaded = await imageUploader(e.target.files[0]);
+    setImage(uploaded.url);
+    await fetch(
+      `/api/auth/user?email=${userData?.email}&image=${uploaded.url}`,
+      {
+        method: "PATCH",
+      },
+    );
+    await signOut();
   };
   const handleDeleteUser = async () => {
     if (userData) {
@@ -79,6 +110,7 @@ export default function Profile() {
   if (status === "unauthenticated") {
     return <div>로그인 후 이용 가능합니다.</div>;
   }
+
   return (
     <div>
       <Head>
@@ -86,29 +118,38 @@ export default function Profile() {
         <meta name="description" content="" />
         <meta name="keywords" content="BLOG, 블로그, Allog" />
       </Head>
-      {session && (
+      {session && session.user && (
         <div className="flex flex-col min-h-[720px] my-16 md:w-[768px] md:mx-32">
           <section className="flex items-center">
             <div className="flex flex-col">
-              <img
-                src={user?.image}
-                alt="user-img"
-                width={128}
-                height={128}
-                className="rounded-full"
+              <div className="w-[128px] h-[128px]">
+                {image ? (
+                  <img
+                    src={image}
+                    alt="user-img"
+                    className="rounded-full aspect-square"
+                  />
+                ) : (
+                  <img
+                    src={session.user.image}
+                    alt="user-img"
+                    className="rounded-full aspect-square"
+                  />
+                )}
+              </div>
+              <label
+                htmlFor="img"
+                className="mt-4 mb-2 text-white bg-sky-500 rounded-md py-1.5 text-sm text-center"
+              >
+                이미지 변경
+              </label>
+              <input
+                className="hidden"
+                type="file"
+                id="img"
+                accept="image/*"
+                onChange={onChangeImagefile}
               />
-              <button
-                className="mt-4 mb-2 text-white bg-sky-500 rounded-md py-1.5 text-sm"
-                type="button"
-              >
-                이미지 업로드
-              </button>
-              <button
-                className="text-white bg-sky-500 rounded-md py-1.5 text-sm"
-                type="button"
-              >
-                이미지 제거
-              </button>
             </div>
             <div className="ml-12 w-5/6">
               {!isCheck ? (

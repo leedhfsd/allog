@@ -1,4 +1,5 @@
 import { useSession } from "next-auth/react";
+import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Like, User } from "../../interfaces";
@@ -26,14 +27,14 @@ export default function Users() {
       if (session?.user) {
         const res = await fetch(`/api/liked?name=${session?.user?.name}`);
         const data = (await res.json()) as Like[];
-        if (Array.isArray(data[0].users)) setLikedUsers(data[0].users);
+        if (Array.isArray(data) && typeof data[0].users !== "undefined")
+          setLikedUsers(data[0].users);
       }
     }
     getLike().catch(() => {
       throw new Error();
     });
-  }, [session]);
-
+  }, [session?.user]);
   useEffect(() => {
     async function getLikedUsers() {
       if (likedUsers.length > 0) {
@@ -49,6 +50,14 @@ export default function Users() {
   }, [likedUsers]);
   return (
     <div>
+      <Head>
+        <title>좋아요 | Allog</title>
+        <meta
+          name="description"
+          content="Allog 회원님들의 좋아요를 확인할 수 있는 페이지입니다."
+        />
+        <meta name="keywords" content="BLOG, 블로그, Allog" />
+      </Head>
       <div className="flex justify-center my-16 text-xl">
         <Link className="" href="/liked/posts">
           <div className="mx-2 py-2 text-[#868e96]">좋아한 글</div>
@@ -59,7 +68,7 @@ export default function Users() {
       </div>
       <div>
         <div className="mx-12 2xl:mx-80 3xl:mx-96 text-xl mb-12">
-          전체 유저 ({users.length})
+          전체 유저 ({users.length ? users.length : 0})
         </div>
       </div>
       {session &&
@@ -76,7 +85,7 @@ export default function Users() {
                   alt="profile"
                   height={128}
                   width={128}
-                  className="rounded-full"
+                  className="rounded-full aspect-square"
                 />
                 <div className="flex flex-col mx-4">
                   {user.nickname !== "" ? (

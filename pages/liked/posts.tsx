@@ -1,4 +1,5 @@
 import { useSession } from "next-auth/react";
+import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Article, Like } from "../../interfaces";
@@ -25,7 +26,7 @@ export default function Posts() {
       if (session?.user) {
         const res = await fetch(`/api/liked?name=${session?.user?.name}`);
         const data = (await res.json()) as Like[];
-        if (Array.isArray(data[0].posts)) setLikedPosts(data[0].posts);
+        if (Array.isArray(data)) setLikedPosts(data[0].posts);
       }
     }
     getLike().catch(() => {
@@ -41,12 +42,22 @@ export default function Posts() {
         setPosts(data);
       }
     }
-    getLikedPosts().catch(() => {
-      throw new Error();
-    });
+    if (likedPosts.length > 0) {
+      getLikedPosts().catch(() => {
+        throw new Error();
+      });
+    }
   }, [likedPosts]);
   return (
     <div>
+      <Head>
+        <title>좋아요 | Allog</title>
+        <meta
+          name="description"
+          content="Allog 회원님들의 좋아요를 확인할 수 있는 페이지입니다."
+        />
+        <meta name="keywords" content="BLOG, 블로그, Allog" />
+      </Head>
       <div className="flex justify-center my-16 text-xl">
         <Link className="" href="/liked/posts">
           <div className="mx-2 py-2 border-black border-b-2">좋아한 글</div>
@@ -56,15 +67,15 @@ export default function Posts() {
         </Link>
       </div>
       <div>
-        <div className="px-4 mx-12 2xl:mx-80 3xl:mx-96 text-xl mb-12">
-          전체 글 ({posts.length})
+        <div className="px-4 mx-12 2xl:mx-80 3xl:mx-96 text-xl">
+          전체 글 ({posts.length ? posts.length : 0})
         </div>
         {session && posts && posts.length > 0 ? (
           <div>
             {posts.map((item) => (
               <div
                 key={item._id}
-                className="flex mx-12 2xl:mx-80 3xl:mx-96 py-16"
+                className="flex mx-12 2xl:mx-80 3xl:mx-96 py-12"
               >
                 <Link
                   href={`/article/@${item.writer}/${item._id}/${item.slug}`}
@@ -72,7 +83,7 @@ export default function Posts() {
                   <h1 className="hover:underline font-bold text-xl my-1">
                     {item.title}
                   </h1>
-                  <p className="mb-2 line_clamp whitespace-pre-wrap min-h-[78px] text-[#666666]">
+                  <p className="mb-2 line_clamp whitespace-pre-wrap min-h-[px] text-[#666666]">
                     {item.content}
                   </p>
                   <div className="flex text-sm">

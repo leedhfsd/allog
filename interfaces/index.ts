@@ -10,6 +10,7 @@ export interface Article {
   writer: string;
   profile: string;
   slug: string;
+  thumbnailImage: string;
   sanitizedHtml: string;
   disclosureStatus: boolean;
 }

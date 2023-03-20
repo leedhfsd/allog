@@ -32,8 +32,8 @@ function MyPage({
         <div className="flex flex-col items-center">
           <div className="flex flex-row items-center mb-8">
             <img
-              className="rounded-full mr-6"
-              src={article[article.length - 1].profile}
+              className="rounded-full mr-6 aspect-square"
+              src={user?.image}
               width={128}
               height={128}
               alt="user-profile"
@@ -64,15 +64,21 @@ function MyPage({
             article
               .filter((post) => post.disclosureStatus)
               .map((post) => (
-                <div className="my-8 md:w-[768px]" key={post._id}>
+                <div className="my-8 w-[400px] md:w-[768px]" key={post._id}>
                   <Link
                     href={`/article/@${post.writer}/${post._id}/${post.slug}`}
                   >
-                    <img
-                      alt="sample"
-                      className="rounded-md inline-block w-full"
-                      src="/sample.gif"
-                    />
+                    {post.thumbnailImage ? (
+                      <div className="h-[400px]">
+                        <img
+                          alt="thumbnail"
+                          className="rounded-md inline-block w-full h-full object-center object-cover"
+                          src={post.thumbnailImage}
+                        />
+                      </div>
+                    ) : (
+                      <div />
+                    )}
                     <h1 className="text-2xl font-bold my-4 truncate">
                       {post.title}
                     </h1>
@@ -107,15 +113,21 @@ function MyPage({
           {article
             .filter((post) => !post.disclosureStatus)
             .map((post) => (
-              <div className="my-8 md:w-[768px]" key={post._id}>
+              <div className="my-8 w-[400px] md:w-[768px]" key={post._id}>
                 <Link
                   href={`/article/@${post.writer}/${post._id}/${post.slug}`}
                 >
-                  <img
-                    alt="sample"
-                    className="rounded-md inline-block w-full"
-                    src="/sample.gif"
-                  />
+                  {post.thumbnailImage ? (
+                    <div className="h-[400px]">
+                      <img
+                        alt="thumbnail"
+                        className="rounded-md inline-block w-full h-full object-center object-cover"
+                        src={post.thumbnailImage}
+                      />
+                    </div>
+                  ) : (
+                    <div />
+                  )}
                   <h1 className="text-2xl font-bold my-4 truncate">
                     {post.title}
                   </h1>
@@ -205,6 +217,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {
         data: article,
+        userdata,
+      },
+    };
+  }
+
+  if (userdata) {
+    return {
+      props: {
+        data: [],
         userdata,
       },
     };

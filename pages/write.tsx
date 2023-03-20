@@ -35,7 +35,9 @@ function Write({
   const [fail, setFail] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [markdown, setMarkdown] = useState("");
+  const [image, setImage] = useState("");
   const textRef = useRef<HTMLTextAreaElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
   const tagRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
   const router = useRouter();
@@ -98,6 +100,31 @@ function Write({
       setIsPrivate(false);
     }
   };
+  const imageUploader = async (file) => {
+    alert("이미지 파일의 크기가 큰 경우 업로드를 기다려주세요.");
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append(
+      "upload_preset",
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS,
+    );
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
+    return res.json();
+  };
+
+  const onChangeImagefile = async (e) => {
+    const uploaded = await imageUploader(e.target.files[0]);
+    setImage(uploaded.url);
+    setContent(`${content}\n![](${uploaded.url})`);
+    imageRef.current.value = "";
+  };
+
   const handleSubmitArticle = (e: SyntheticEvent) => {
     if (title !== "" && session !== null) {
       setFail(false);
@@ -121,6 +148,12 @@ function Write({
         if (!url) {
           url = `${curDate.getTime()}`;
         }
+        const regex = /!\[(.*?)\]\((.*?)\)/g;
+        const matches = content.match(regex);
+        let thumbnail = "";
+        if (matches && matches.length > 0) {
+          thumbnail = matches[0].match(/(?<=\().+?(?=\))/)[0];
+        }
         if (!data) {
           const formData = {
             title,
@@ -132,6 +165,7 @@ function Write({
             writer: session.user.name,
             profile: session.user.image,
             slug: url,
+            thumbnailImage: thumbnail,
             sanitizedHtml: markdown,
             disclosureStatus: isPrivate,
           };
@@ -150,6 +184,7 @@ function Write({
             content,
             hashtag: tag,
             slug: url,
+            thumbnailImage: thumbnail,
             sanitizedHtml: markdown,
             disclosureStatus: isPrivate,
           };
@@ -248,6 +283,24 @@ function Write({
                   <p>등록된 태그를 클릭하면 삭제할 수 있습니다.</p>
                 </div>
               )}
+              <div className="mb-4">
+                <label htmlFor="img" className="hover:opacity-80">
+                  <img
+                    src="upload_64.png"
+                    alt="img_upload"
+                    height={36}
+                    width={36}
+                  />
+                </label>
+                <input
+                  ref={imageRef}
+                  className="hidden"
+                  type="file"
+                  id="img"
+                  accept="image/*"
+                  onChange={onChangeImagefile}
+                />
+              </div>
               <textarea
                 className="focus:outline-none resize-none text-lg w-full"
                 rows={23}

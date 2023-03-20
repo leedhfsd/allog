@@ -44,6 +44,7 @@ async function postData(req: NextApiRequest, res: NextApiResponse) {
     writer: formData.writer,
     profile: formData.profile,
     slug: formData.slug,
+    thumbnailImage: formData.thumbnailImage,
     sanitizedHtml: formData.sanitizedHtml,
     disclosureStatus: formData.disclosureStatus,
   };
