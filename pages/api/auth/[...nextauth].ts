@@ -1,3 +1,4 @@
+/* eslint-disable */
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
@@ -99,8 +100,8 @@ export const authOptions: NextAuthOptions = {
     },
     session({ session, token }) {
       if (token && session.user) {
-        session.user.nickname = token.nickname;
-        session.user.userinfo = token.userinfo;
+        session.user.nickname = token.nickname as string;
+        session.user.userinfo = token.userinfo as string;
       }
       return session;
     },

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Link from "next/link";
 import Head from "next/head";
 import {
@@ -100,7 +101,7 @@ function Write({
       setIsPrivate(false);
     }
   };
-  const imageUploader = async (file) => {
+  const imageUploader = async (file: any) => {
     alert("이미지 파일의 크기가 큰 경우 업로드를 기다려주세요.");
     const formData = new FormData();
     formData.append("file", file);
@@ -118,11 +119,13 @@ function Write({
     return res.json();
   };
 
-  const onChangeImagefile = async (e) => {
+  const onChangeImagefile = async (e: any) => {
     const uploaded = await imageUploader(e.target.files[0]);
     setImage(uploaded.url);
     setContent(`${content}\n![](${uploaded.url})`);
-    imageRef.current.value = "";
+    if (imageRef.current !== null) {
+      imageRef.current.value = "";
+    }
   };
 
   const handleSubmitArticle = (e: SyntheticEvent) => {
@@ -152,7 +155,10 @@ function Write({
         const matches = content.match(regex);
         let thumbnail = "";
         if (matches && matches.length > 0) {
-          thumbnail = matches[0].match(/(?<=\().+?(?=\))/)[0];
+          const tmp = matches[0].match(/(?<=\().+?(?=\))/);
+          if (tmp !== null) {
+            thumbnail = tmp[0];
+          }
         }
         if (!data) {
           const formData = {

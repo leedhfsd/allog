@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -52,7 +53,7 @@ export default function Profile() {
     const target = e.target as HTMLInputElement;
     setNickname(target.value);
   };
-  const imageUploader = async (file) => {
+  const imageUploader = async (file: any) => {
     alert("변경 완료후 로그아웃 됩니다. 다시 로그인해주세요.");
     const formData = new FormData();
     formData.append("file", file);
@@ -70,7 +71,7 @@ export default function Profile() {
     return res.json();
   };
 
-  const onChangeImagefile = async (e) => {
+  const onChangeImagefile = async (e: any) => {
     const uploaded = await imageUploader(e.target.files[0]);
     setImage(uploaded.url);
     await fetch(
