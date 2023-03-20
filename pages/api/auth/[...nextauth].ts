@@ -74,7 +74,7 @@ export const authOptions: NextAuthOptions = {
             typeof password === "string" &&
             isValidPassword(password, hashedPassword, salt)
           ) {
-            return user;
+            return user as any;
           }
           return null;
         }
