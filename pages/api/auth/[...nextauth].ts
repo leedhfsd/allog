@@ -59,8 +59,8 @@ export const authOptions: NextAuthOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials, req) {
-        const enteredEmail = credentials.email;
-        const password = credentials.password;
+        const enteredEmail = credentials?.email;
+        const password = credentials?.password;
         const client = await clientPromise;
         const database = client.db();
         const usersCollection = database.collection("users");
@@ -70,7 +70,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Not registered");
         } else {
           const { hashedPassword, salt } = user;
-          if (isValidPassword(password, hashedPassword, salt)) {
+          if (
+            typeof password === "string" &&
+            isValidPassword(password, hashedPassword, salt)
+          ) {
             return user;
           }
           return null;
