@@ -97,7 +97,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let articleData: Response | undefined;
   if (slug && slug.length === 1) {
     articleData = await fetch(
-      `${process.env.BASE_URL}:443/api/article?hashtag=${slug[0]}`,
+      `${process.env.BASE_URL}/api/article?hashtag=${slug[0]}`,
     );
   }
   const article = (await articleData?.json()) as Article[];

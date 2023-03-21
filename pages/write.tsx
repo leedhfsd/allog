@@ -382,7 +382,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     curUser.name === user
   ) {
     const res = await fetch(
-      `${process.env.BASE_URL}:443/api/article?writer=${user}&id=${id}`,
+      `${process.env.BASE_URL}/api/article?writer=${user}&id=${id}`,
     );
     const data = (await res.json()) as Article[];
     return {
