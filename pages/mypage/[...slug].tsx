@@ -206,9 +206,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (slug && slug.length === 1) {
     writer = encodeURIComponent(slug[0].substring(1));
     articleData = await fetch(
-      `${process.env.BASE_URL}/api/article?writer=${writer}&status=true`,
+      `${process.env.BASE_URL}:443/api/article?writer=${writer}&status=true`,
     );
-    res = await fetch(`${process.env.BASE_URL}/api/auth/user?name=${writer}`);
+    res = await fetch(
+      `${process.env.BASE_URL}:443/api/auth/user?name=${writer}`,
+    );
   }
   const userdata = (await res?.json()) as User;
   const article = (await articleData?.json()) as Article[];
