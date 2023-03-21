@@ -101,8 +101,9 @@ export default function Register() {
               setIsCheck(false);
             }, 180000);
           })
-          .catch((err) => {
-            throw new Error(err);
+          .catch((e) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            throw new Error(e);
           });
       }
     }
