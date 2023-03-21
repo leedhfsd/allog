@@ -24,7 +24,7 @@ module.exports = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://allog.vercl.app/api/:path*",
+        destination: "https://allog.vercel.app/api/:path*",
       },
     ];
   },
