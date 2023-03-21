@@ -101,8 +101,8 @@ export default function Register() {
               setIsCheck(false);
             }, 180000);
           })
-          .catch(() => {
-            throw new Error();
+          .catch((err) => {
+            throw new Error(err);
           });
       }
     }
