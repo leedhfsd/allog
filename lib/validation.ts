@@ -43,6 +43,18 @@ export function createHashPassword(password: string) {
   return { salt, hashedPassword };
 }
 
+export function createHash(text: string) {
+  const key = pbkdf2Sync(
+    text,
+    process.env.NEXT_PUBLIC_NEXTAUTH_SECRET,
+    101243,
+    64,
+    "sha512",
+  );
+  const hashedPassword = key.toString("base64");
+  return hashedPassword;
+}
+
 export function isValidPassword(
   entered: string,
   hashedPassword: string,

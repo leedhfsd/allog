@@ -11,7 +11,7 @@ declare namespace NodeJS {
     EMAIL_SERVER_HOST: string;
     EMAIL_SERVER_PORT: number;
     EMAIL_FROM: string;
-    NEXTAUTH_SECRET: string;
+    NEXT_PUBLIC_NEXTAUTH_SECRET: string;
     NEXT_PUBLIC_CLOUD_NAME: string;
     CLOUDINARY_API_KEY: string;
     CLOUDINARY_API_SECRET: string;

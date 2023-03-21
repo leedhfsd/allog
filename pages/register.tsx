@@ -3,7 +3,11 @@ import { useRouter } from "next/router";
 import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { setTimeout } from "timers";
 import { User } from "../interfaces";
-import { validateEmail, validationPassword } from "../lib/validation";
+import {
+  isValidPassword,
+  validateEmail,
+  validationPassword,
+} from "../lib/validation";
 
 type Auth = {
   ok: number;
@@ -15,7 +19,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
   const [confirmPassword, setconfirmPassword] = useState("");
-  const [isValidPassword, setIsValidPassword] = useState(false);
+  const [isvalidPass, setIsvalidPass] = useState(false);
   const [authCode, setAuthCode] = useState("");
   const [enteredCode, setEnteredCode] = useState("");
   const [isCheck, setIsCheck] = useState(false);
@@ -103,7 +107,8 @@ export default function Register() {
     }
   };
   const onClickEmailCertificate = () => {
-    if (authCode !== enteredCode) {
+    const salt = process.env.NEXT_PUBLIC_NEXTAUTH_SECRET;
+    if (!isValidPassword(enteredCode, authCode, salt)) {
       alert("인증번호가 일치하지 않습니다.");
     } else {
       setEmailVerified(true);
@@ -123,7 +128,7 @@ export default function Register() {
   });
   useEffect(() => {
     if (!option) {
-      setIsValidPassword(validationPassword(password));
+      setIsvalidPass(validationPassword(password));
     }
   }, [option, password]);
   return (
@@ -159,7 +164,7 @@ export default function Register() {
               onChange={onChangeNickname}
             />
             <label htmlFor="password">비밀번호</label>
-            {isValidPassword ? (
+            {isvalidPass ? (
               <input
                 className="outline-blue-500 py-3 mt-1 mb-4"
                 type="password"
@@ -181,7 +186,7 @@ export default function Register() {
               />
             )}
 
-            {!isValidPassword && (
+            {!isvalidPass && (
               <div className="text-xs text-red-500 my-1">
                 공백없이 8~16자 영문 대소문자, 숫자, 특수문자를 사용해주세요.
               </div>

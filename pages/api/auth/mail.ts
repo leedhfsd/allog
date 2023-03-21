@@ -1,21 +1,23 @@
 import { renderFile } from "ejs";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createTransport } from "nodemailer";
-import { validateEmail } from "../../../lib/validation";
+import { createHash, validateEmail } from "../../../lib/validation";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   const { email } = req.query;
-  const authCode = Math.random().toString().substring(2, 8);
+  const randomDigits = Math.random().toString().substring(2, 8);
+  let authCode = "1234";
+  authCode = createHash(randomDigits);
   let status = true;
   let form: string;
   if (typeof email === "string" && validateEmail(email)) {
     await new Promise((resolve, reject) => {
       renderFile(
         "./lib/form.ejs",
-        { authCode, name: email.split("@")[0] },
+        { randomDigits, name: email.split("@")[0] },
         (err, data) => {
           if (err) {
             reject(err);
@@ -54,5 +56,5 @@ export default async function handler(
   if (!status) {
     return res.status(500).send({ error: "failed to send email" });
   }
-  return res.status(200).send({ ok: "mail send completed" });
+  return res.status(200).send({ ok: 200, authCode });
 }
