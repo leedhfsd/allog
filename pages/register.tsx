@@ -93,18 +93,12 @@ export default function Register() {
       } else {
         setIsCheck(true);
         const fetchAuth = await fetch(`/api/auth/mail?email=${email}`);
-        await fetchAuth
-          .json()
-          .then((value: Auth) => {
-            setAuthCode(value.authCode);
-            setTimeout(() => {
-              setIsCheck(false);
-            }, 180000);
-          })
-          .catch((e) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            throw new Error(e);
-          });
+        await fetchAuth.json().then((value: Auth) => {
+          setAuthCode(value.authCode);
+          setTimeout(() => {
+            setIsCheck(false);
+          }, 180000);
+        });
       }
     }
   };
