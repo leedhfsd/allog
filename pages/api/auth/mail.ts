@@ -14,35 +14,35 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       { authCode, name: email.split("@")[0] },
       (err, data) => {
         form = data;
+        const transporter = createTransport({
+          host: process.env.EMAIL_SERVER_HOST,
+          port: process.env.EMAIL_SERVER_PORT,
+          secure: false,
+          auth: {
+            user: process.env.EMAIL_SERVER_USER,
+            pass: process.env.EMAIL_SERVER_PASSWORD,
+          },
+        });
+        const mailOptions = {
+          from: "leedhfsd@gmail.com",
+          to: email,
+          subject: "[Allog] 인증번호 안내 메일",
+          html: form,
+        };
+
+        transporter.sendMail(mailOptions, (e) => {
+          if (e) {
+            status = false;
+          }
+        });
+        if (!status) {
+          return res.status(500).send({ error: "failed to send email" });
+        }
+        return res.send({
+          ok: 200,
+          authCode,
+        });
       },
     );
   }
-  const transporter = createTransport({
-    host: process.env.EMAIL_SERVER_HOST,
-    port: process.env.EMAIL_SERVER_PORT,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_SERVER_USER,
-      pass: process.env.EMAIL_SERVER_PASSWORD,
-    },
-  });
-  const mailOptions = {
-    from: "no_reply@allog.com",
-    to: email,
-    subject: "[Allog] 인증번호 안내 메일",
-    html: form,
-  };
-  // eslint-disable-next-line consistent-return
-  transporter.sendMail(mailOptions, (err) => {
-    if (err) {
-      status = false;
-    }
-  });
-  if (!status) {
-    return res.status(500).send({ error: "failed to send email" });
-  }
-  return res.send({
-    ok: 200,
-    authCode,
-  });
 }

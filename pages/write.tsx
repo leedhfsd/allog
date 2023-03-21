@@ -1,4 +1,3 @@
-/* eslint-disable */
 import Link from "next/link";
 import Head from "next/head";
 import {
@@ -36,7 +35,6 @@ function Write({
   const [fail, setFail] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [markdown, setMarkdown] = useState("");
-  const [image, setImage] = useState("");
   const textRef = useRef<HTMLTextAreaElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
   const tagRef = useRef<HTMLInputElement>(null);
@@ -101,7 +99,7 @@ function Write({
       setIsPrivate(false);
     }
   };
-  const imageUploader = async (file: any) => {
+  const imageUploader = async (file: Blob) => {
     alert("이미지 파일의 크기가 큰 경우 업로드를 기다려주세요.");
     const formData = new FormData();
     formData.append("file", file);
@@ -118,10 +116,11 @@ function Write({
     );
     return res.json();
   };
-
+  // eslint-disable-next-line
   const onChangeImagefile = async (e: any) => {
+    // eslint-disable-next-line
     const uploaded = await imageUploader(e.target.files[0]);
-    setImage(uploaded.url);
+    // eslint-disable-next-line
     setContent(`${content}\n![](${uploaded.url})`);
     if (imageRef.current !== null) {
       imageRef.current.value = "";
@@ -157,7 +156,7 @@ function Write({
         if (matches && matches.length > 0) {
           const tmp = matches[0].match(/(?<=\().+?(?=\))/);
           if (tmp !== null) {
-            thumbnail = tmp[0];
+            [thumbnail] = tmp;
           }
         }
         if (!data) {

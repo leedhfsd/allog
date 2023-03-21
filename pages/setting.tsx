@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -53,7 +52,7 @@ export default function Profile() {
     const target = e.target as HTMLInputElement;
     setNickname(target.value);
   };
-  const imageUploader = async (file: any) => {
+  const imageUploader = async (file: Blob) => {
     alert("변경 완료후 로그아웃 됩니다. 다시 로그인해주세요.");
     const formData = new FormData();
     formData.append("file", file);
@@ -70,11 +69,14 @@ export default function Profile() {
     );
     return res.json();
   };
-
+  // eslint-disable-next-line
   const onChangeImagefile = async (e: any) => {
+    // eslint-disable-next-line
     const uploaded = await imageUploader(e.target.files[0]);
+    // eslint-disable-next-line
     setImage(uploaded.url);
     await fetch(
+      // eslint-disable-next-line
       `/api/auth/user?email=${userData?.email}&image=${uploaded.url}`,
       {
         method: "PATCH",
@@ -82,6 +84,7 @@ export default function Profile() {
     );
     await signOut();
   };
+
   const handleDeleteUser = async () => {
     if (userData) {
       await fetch(`/api/article?writer=${userData.name}`, {
