@@ -17,7 +17,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         const transporter = createTransport({
           host: process.env.EMAIL_SERVER_HOST,
           port: process.env.EMAIL_SERVER_PORT,
-          secure: false,
+          secure: true,
           auth: {
             user: process.env.EMAIL_SERVER_USER,
             pass: process.env.EMAIL_SERVER_PASSWORD,
@@ -38,10 +38,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         if (!status) {
           return res.status(500).send({ error: "failed to send email" });
         }
-        return res.send({
-          ok: 200,
-          authCode,
-        });
+        return res.status(200).send({ ok: "Mail send completed" });
       },
     );
   }
