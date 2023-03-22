@@ -1,13 +1,16 @@
+/* eslint-disable no-console */
 import { renderFile } from "ejs";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createTransport } from "nodemailer";
 import { createHash, validateEmail } from "../../../lib/validation";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   const { email } = req.query;
   const randomDigits = Math.random().toString().substring(2, 8);
   const authCode = createHash(randomDigits);
-  let status = true;
   let form;
   if (typeof email === "string" && validateEmail(email)) {
     renderFile(
@@ -27,6 +30,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       pass: process.env.EMAIL_SERVER_PASSWORD,
     },
   });
+  await new Promise((resolve, reject) => {
+    transporter.verify((error, success) => {
+      if (error) {
+        console.log(error);
+        reject(error);
+      } else {
+        console.log("Server is ready");
+        resolve(success);
+      }
+    });
+  });
+
   const mailOptions = {
     from: "no_reply@allog.com",
     to: email,
@@ -34,16 +49,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     html: form,
   };
   // eslint-disable-next-line consistent-return
-  transporter.sendMail(mailOptions, (err) => {
-    if (err) {
-      status = false;
-    }
+  await new Promise(() => {
+    transporter.sendMail(mailOptions, (err) => {
+      if (err) {
+        return res.status(500).send({ error: "failed to send email" });
+      }
+      return res.send({
+        ok: 200,
+        authCode,
+      });
+    });
   });
-  if (!status) {
-    return res.status(500).send({ error: "failed to send email" });
-  }
-  return res.send({
-    ok: 200,
-    authCode,
-  });
+  return res.status(200).send({ error: "failed" });
 }
