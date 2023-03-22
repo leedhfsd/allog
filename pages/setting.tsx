@@ -77,7 +77,7 @@ export default function Profile() {
     setImage(uploaded.secure_url);
     await fetch(
       // eslint-disable-next-line
-      `/api/auth/user?email=${userData?.email}&image=${uploaded.url}`,
+      `/api/auth/user?email=${userData?.email}&image=${uploaded.secure_url}`,
       {
         method: "PATCH",
       },
