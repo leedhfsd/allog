@@ -121,7 +121,7 @@ function Write({
     // eslint-disable-next-line
     const uploaded = await imageUploader(e.target.files[0]);
     // eslint-disable-next-line
-    setContent(`${content}\n![](${uploaded.url})`);
+    setContent(`${content}\n![](${uploaded.secure_url})`);
     if (imageRef.current !== null) {
       imageRef.current.value = "";
     }
