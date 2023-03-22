@@ -13,13 +13,21 @@ export default async function handler(
   const authCode = createHash(randomDigits);
   let form;
   if (typeof email === "string" && validateEmail(email)) {
-    renderFile(
-      "./lib/form.ejs",
-      { randomDigits, name: email.split("@")[0] },
-      (err, data) => {
-        form = data;
-      },
-    );
+    await new Promise((resolve, reject) => {
+      renderFile(
+        "./lib/form.ejs",
+        { randomDigits, name: email.split("@")[0] },
+        (err, data) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+          } else {
+            form = data;
+            resolve(data);
+          }
+        },
+      );
+    });
   }
   const transporter = createTransport({
     host: process.env.EMAIL_SERVER_HOST,
