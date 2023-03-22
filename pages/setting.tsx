@@ -74,7 +74,7 @@ export default function Profile() {
     // eslint-disable-next-line
     const uploaded = await imageUploader(e.target.files[0]);
     // eslint-disable-next-line
-    setImage(uploaded.url);
+    setImage(uploaded.secure_url);
     await fetch(
       // eslint-disable-next-line
       `/api/auth/user?email=${userData?.email}&image=${uploaded.url}`,
