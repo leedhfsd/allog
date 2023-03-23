@@ -187,7 +187,7 @@ function MyPage({
               ) : (
                 <div className="text-xl font-bold">{user?.name}</div>
               )}
-              <div className="mt-1">{user?.userinfo}</div>
+              <div className="mt-1 text-xs sm:text-base">{user?.userinfo}</div>
             </div>
           </div>
           <div>
