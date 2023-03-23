@@ -58,7 +58,7 @@ export default function Users() {
         />
         <meta name="keywords" content="BLOG, 블로그, Allog" />
       </Head>
-      <div className="flex justify-center my-16 text-xl">
+      <div className="flex justify-center my-16 md:text-xl">
         <Link className="" href="/liked/posts">
           <div className="mx-2 py-2 text-[#868e96]">좋아한 글</div>
         </Link>
@@ -67,7 +67,7 @@ export default function Users() {
         </Link>
       </div>
       <div>
-        <div className="mx-12 2xl:mx-80 3xl:mx-96 text-xl mb-12">
+        <div className="px-4 sm:mx-16 lg:mx-32 2xl:mx-80 3xl:mx-96 md:text-xl mb-12">
           전체 유저 ({users.length ? users.length : 0})
         </div>
       </div>
@@ -76,7 +76,7 @@ export default function Users() {
         users.map((user) => (
           <div
             key={user.email}
-            className="mx-12 2xl:mx-80 3xl:mx-96 text-xl my-12 flex items-center justify-between"
+            className="sm:mx-16 lg:mx-32 2xl:mx-80 3xl:mx-96 text-xl my-12 flex items-center justify-between"
           >
             <Link href={`/article/@${user.name}`}>
               <div className="flex items-center">
@@ -89,17 +89,21 @@ export default function Users() {
                 />
                 <div className="flex flex-col mx-4">
                   {user.nickname !== "" ? (
-                    <div className="sm:text-2xl font-bold">{user.nickname}</div>
+                    <div className="text-sm sm:text-base md:text-2xl font-bold">
+                      {user.nickname}
+                    </div>
                   ) : (
-                    <div className="sm:text-2xl font-bold">{user.name}</div>
+                    <div className="text-sm sm:text-base md:text-2xl font-bold">
+                      {user.name}
+                    </div>
                   )}
-                  <div className="text-sm sm:text-base mt-1">
+                  <div className="text-xs sm:text-sm md:text-base mt-1">
                     {user.userinfo}
                   </div>
                 </div>
               </div>
             </Link>
-            <span className="mr-16">
+            <span className="">
               <button
                 type="button"
                 onClick={() => onClickRemoveLikedUsers(user.name)}

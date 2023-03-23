@@ -30,13 +30,18 @@ function Hashtag({
       </Head>
       {article && (
         <section className="">
-          <h1 className="font-bold text-6xl my-12"># {hashtag}</h1>
+          <h1 className="font-bold text-4xl md:text-5xl lg:text-6xl my-12">
+            # {hashtag}
+          </h1>
           <div className="text-gray-600">
             총<span className="font-bold mx-1">{article.length}개</span>의
             작성글을 찾았습니다.
           </div>
           {article.map((post) => (
-            <div className="my-8 w-[400px] md:w-[768px]" key={post._id}>
+            <div
+              className="my-8 w-[300px] sm:w-[400px] md:w-[768px]"
+              key={post._id}
+            >
               <div className="flex flex-row items-center mb-8">
                 <Link href={`/article/@${post.writer}`}>
                   <img
@@ -49,7 +54,7 @@ function Hashtag({
               </div>
               <Link href={`/article/@${post.writer}/${post._id}/${post.slug}`}>
                 {post.thumbnailImage ? (
-                  <div className="h-[400px]">
+                  <div className="">
                     <img
                       alt="thumbnail"
                       className="rounded-md inline-block w-full h-full object-center object-cover"

@@ -30,9 +30,9 @@ function MyPage({
           <meta name="keywords" content="BLOG, 블로그, Allog" />
         </Head>
         <div className="flex flex-col items-center">
-          <div className="flex flex-row items-center mb-8">
+          <div className="flex flex-row items-center mb-4">
             <img
-              className="rounded-full mr-6 aspect-square"
+              className="rounded-full aspect-square mr-6"
               src={user?.image}
               width={128}
               height={128}
@@ -40,20 +40,24 @@ function MyPage({
             />
             <div>
               {user && user.nickname !== "" ? (
-                <div className="text-2xl font-bold">{user?.nickname}</div>
+                <div className="text-sm sm:text-xl md:text-2xl font-bold">
+                  {user?.nickname}
+                </div>
               ) : (
-                <div className="text-2xl font-bold">{user?.name}</div>
+                <div className="text-sm sm:text-xl md:text-2xl font-bold">
+                  {user?.name}
+                </div>
               )}
-              <div className="mt-1">{user?.userinfo}</div>
+              <div className="mt-1 text-xs sm:text-base">{user?.userinfo}</div>
             </div>
           </div>
           <div>
             {user && user.nickname !== "" ? (
-              <div className="text-xl font-bold text-sky-700">
+              <div className="text-sm sm:text-base md:text-xl font-bold text-sky-700">
                 {user?.nickname}님이 작성한 글들을 확인해보세요.
               </div>
             ) : (
-              <div className="text-xl font-bold text-sky-700">
+              <div className="text-sm sm:text-base md:text-xl font-bold text-sky-700">
                 {user?.name}님이 작성한 글들을 확인해보세요.
               </div>
             )}
@@ -64,12 +68,15 @@ function MyPage({
             article
               .filter((post) => post.disclosureStatus)
               .map((post) => (
-                <div className="my-8 w-[400px] md:w-[768px]" key={post._id}>
+                <div
+                  className="my-8 w-[300px] sm:w-[400px] md:w-[768px]"
+                  key={post._id}
+                >
                   <Link
                     href={`/article/@${post.writer}/${post._id}/${post.slug}`}
                   >
                     {post.thumbnailImage ? (
-                      <div className="h-[400px]">
+                      <div className="">
                         <img
                           alt="thumbnail"
                           className="rounded-md inline-block w-full h-full object-center object-cover"
@@ -102,7 +109,7 @@ function MyPage({
                   <div className="flex flex-row truncate text-sm text-gray-400">
                     <div className="">{post.createdAt}</div>
                     <span className="px-2">·</span>
-                    <div>❤ {post.liked}</div>
+                    <div>❤ {post.liked.length ? post.liked.length : 0}</div>
                     <span className="px-2">·</span>
                     <div className="bg-[#333333] text-white pl-2 pr-4 rounded">
                       🗝 비공개
@@ -113,12 +120,15 @@ function MyPage({
           {article
             .filter((post) => !post.disclosureStatus)
             .map((post) => (
-              <div className="my-8 w-[400px] md:w-[768px]" key={post._id}>
+              <div
+                className="my-8 w-[300px] sm:w-[400px] md:w-[768px]"
+                key={post._id}
+              >
                 <Link
                   href={`/article/@${post.writer}/${post._id}/${post.slug}`}
                 >
                   {post.thumbnailImage ? (
-                    <div className="h-[400px]">
+                    <div className="">
                       <img
                         alt="thumbnail"
                         className="rounded-md inline-block w-full h-full object-center object-cover"
@@ -151,7 +161,7 @@ function MyPage({
                 <div className="flex flex-row truncate text-sm text-gray-400">
                   <div className="">{post.createdAt}</div>
                   <span className="px-2">·</span>
-                  <div>❤ {post.liked.length}</div>
+                  <div>❤ {post.liked.length ? post.liked.length : 0}</div>
                 </div>
               </div>
             ))}

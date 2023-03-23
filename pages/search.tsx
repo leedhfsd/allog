@@ -56,7 +56,10 @@ export default function Search() {
         )}
         {Array.isArray(article) &&
           article.map((post) => (
-            <div className="my-8 w-[400px] md:w-[768px]" key={post._id}>
+            <div
+              className="my-8 w-[300px] sm:w-[400px] md:w-[768px]"
+              key={post._id}
+            >
               <div className="flex flex-row items-center mb-8">
                 <img
                   className="rounded-full bg-white h-12 w-12 bg-cover mr-1 inline"
@@ -67,7 +70,7 @@ export default function Search() {
               </div>
               <Link href={`/article/@${post.writer}/${post._id}/${post.slug}`}>
                 {post.thumbnailImage ? (
-                  <div className="h-[400px]">
+                  <div className="">
                     <img
                       alt="thumbnail"
                       className="rounded-md inline-block w-full h-full object-center object-cover"

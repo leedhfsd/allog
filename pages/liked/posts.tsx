@@ -58,7 +58,7 @@ export default function Posts() {
         />
         <meta name="keywords" content="BLOG, 블로그, Allog" />
       </Head>
-      <div className="flex justify-center my-16 text-xl">
+      <div className="flex justify-center my-16 md:text-xl">
         <Link className="" href="/liked/posts">
           <div className="mx-2 py-2 border-black border-b-2">좋아한 글</div>
         </Link>
@@ -67,7 +67,7 @@ export default function Posts() {
         </Link>
       </div>
       <div>
-        <div className="px-4 mx-12 2xl:mx-80 3xl:mx-96 text-xl">
+        <div className="px-4 sm:mx-16 lg:mx-32 2xl:mx-80 3xl:mx-96 md:text-xl">
           전체 글 ({posts.length ? posts.length : 0})
         </div>
         {session && posts && posts.length > 0 ? (
@@ -75,15 +75,15 @@ export default function Posts() {
             {posts.map((item) => (
               <div
                 key={item._id}
-                className="flex mx-12 2xl:mx-80 3xl:mx-96 py-12"
+                className="flex sm:mx-16 lg:mx-32 2xl:mx-80 3xl:mx-96 py-6"
               >
                 <Link
                   href={`/article/@${item.writer}/${item._id}/${item.slug}`}
                 >
-                  <h1 className="hover:underline font-bold text-xl my-1">
+                  <h1 className="hover:underline break-all line_clamp font-bold md:text-xl my-1 ">
                     {item.title}
                   </h1>
-                  <p className="mb-2 line_clamp whitespace-pre-wrap min-h-[px] text-[#666666]">
+                  <p className="mb-2 line_clamp break-all md:whitespace-pre-wrap text-sm sm:text-base min-h-[16px] text-[#666666]">
                     {item.content}
                   </p>
                   <div className="flex text-sm">

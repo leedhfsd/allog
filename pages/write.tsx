@@ -121,12 +121,13 @@ function Write({
     // eslint-disable-next-line
     const uploaded = await imageUploader(e.target.files[0]);
     // eslint-disable-next-line
-    setContent(`${content}\n![](${uploaded.secure_url})`);
+    setMarkdown(markdown + marked.parse(`\n![](${uploaded.secure_url})\n`));
+    // eslint-disable-next-line
+    setContent(content + `\n![](${uploaded.secure_url})\n`);
     if (imageRef.current !== null) {
       imageRef.current.value = "";
     }
   };
-
   const handleSubmitArticle = (e: SyntheticEvent) => {
     if (title !== "" && session !== null) {
       setFail(false);
@@ -232,7 +233,7 @@ function Write({
   }, [markdown]);
 
   return (
-    <div className="flex h-screen mx-16 lg:mx-24 py-4">
+    <div className="flex h-screen mx-2 sm:mx-4 md:mx-8 lg:mx-24 py-4">
       <Head>
         <title>글 작성 | Allog</title>
         <meta
@@ -248,7 +249,7 @@ function Write({
               <textarea
                 rows={1}
                 spellCheck={false}
-                className="text-5xl font-bold focus:outline-none w-full resize-none truncate my-4"
+                className="text-4xl md:text-5xl font-bold focus:outline-none w-full resize-none truncate my-4"
                 name="title"
                 placeholder="제목을 입력하세요"
                 value={title}
@@ -276,7 +277,7 @@ function Write({
                   onMouseDown={onMouseDownOption}
                   autoComplete="off"
                   onKeyDown={onKeyDownTag}
-                  className="focus:outline-none mb-4 text-xl"
+                  className="focus:outline-none mb-4 text-base sm:text-xl"
                   name="tag"
                   type="text"
                   placeholder="태그를 입력하세요"
@@ -316,11 +317,11 @@ function Write({
               />
             </div>
             <div className="flex justify-between items-center mt-4 mb-2">
-              <div className="bg-[#333333] rounded py-1 px-5">
+              <div className="bg-[#333333] rounded py-1 px-2 sm:px-5">
                 <input type="checkbox" id="private" onClick={onClickPrivate} />
                 <label
                   htmlFor="private"
-                  className="mx-2 text-xl font-bold text-white"
+                  className="mx-2 text-base sm:text-xl font-bold text-white"
                 >
                   비공개
                 </label>
@@ -329,7 +330,7 @@ function Write({
                 <Link href="/">
                   <button
                     type="button"
-                    className="text-sky-500 hover:text-sky-400 rounded text-lg mx-1 px-5 font-bold"
+                    className="text-sky-500 hover:text-sky-400 rounded text-base sm:text-xl mx-1 px-5 font-bold"
                   >
                     뒤로가기
                   </button>
@@ -338,7 +339,7 @@ function Write({
                   <button
                     type="button"
                     onClick={handleSubmitArticle}
-                    className="bg-sky-500 hover:bg-sky-400 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
+                    className="bg-sky-500 hover:bg-sky-400 text-white rounded text-base sm:text-xl mx-1 px-5 py-1 font-bold"
                   >
                     수정하기
                   </button>
@@ -346,7 +347,7 @@ function Write({
                   <button
                     type="button"
                     onClick={handleSubmitArticle}
-                    className="bg-sky-500 hover:bg-sky-400 text-white rounded text-lg mx-1 px-5 py-1 font-bold"
+                    className="bg-sky-500 hover:bg-sky-400 text-white rounded text-base sm:text-xl mx-1 px-5 py-1 font-bold"
                   >
                     출간하기
                   </button>

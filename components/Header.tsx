@@ -104,9 +104,9 @@ export default function Header() {
             </div>
           )}
           {isCheck && user && user.name && (
-            <div className="hidden md:block absolute border-black bg-white z-10 w-48 rounded-lg sd mt-12">
+            <div className="block absolute border-black bg-white z-10 w-32 md:w-48 rounded-lg sd mt-12">
               <ul
-                className="text-base border-black cursor-pointer"
+                className="text-sm md:text-base border-black cursor-pointer"
                 ref={listRef}
               >
                 <Link href={`/mypage/@${user.name}`}>
@@ -117,11 +117,13 @@ export default function Header() {
                     내 블로그
                   </li>
                 </Link>
-                <li className="md:hidden py-3 px-4 hover:text-sky-500">
-                  새 글 작성
-                </li>
+                <Link href="/write">
+                  <li className="md:hidden py-3 px-4 hover:text-sky-500">
+                    새 글 작성
+                  </li>
+                </Link>
                 <Link href="/liked/posts">
-                  <li className="py-3 px-4 hover:text-sky-500">좋아요 목록</li>
+                  <li className="py-3 px-4 hover:text-sky-500">좋아요</li>
                 </Link>
                 <Link href="/setting">
                   <li className="py-3 px-4 hover:text-sky-500">설정</li>

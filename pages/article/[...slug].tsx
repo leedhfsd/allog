@@ -254,9 +254,9 @@ function Post({
         </Head>
         <div className="flex flex-col items-center">
           <div className="flex flex-row items-center mb-4">
-            <div>
+            <div className="mr-6">
               <img
-                className="rounded-full mr-6 aspect-square"
+                className="rounded-full aspect-square"
                 src={user?.image}
                 width={128}
                 height={128}
@@ -265,13 +265,13 @@ function Post({
               <span>
                 {session?.user &&
                 likedUser.indexOf(session.user.name) === -1 ? (
-                  <div className="text-center mr-6 mt-2">
+                  <div className="text-center mt-2">
                     <button type="button" onClick={onClickAddLikedUser}>
                       🤍
                     </button>
                   </div>
                 ) : (
-                  <div className="text-center mr-6 mt-2">
+                  <div className="text-center mt-2">
                     <button type="button" onClick={onClickRemoveLikedUser}>
                       ❤
                     </button>
@@ -281,85 +281,42 @@ function Post({
             </div>
             <div>
               {user && user.nickname !== "" ? (
-                <div className="text-2xl font-bold">{user?.nickname}</div>
+                <div className="text-sm sm:text-xl md:text-2xl font-bold">
+                  {user?.nickname}
+                </div>
               ) : (
-                <div className="text-2xl font-bold">{user?.name}</div>
+                <div className="text-sm sm:text-xl md:text-2xl font-bold">
+                  {user?.name}
+                </div>
               )}
-              <div className="mt-1">{user?.userinfo}</div>
+              <div className="mt-1 text-xs sm:text-base">{user?.userinfo}</div>
             </div>
           </div>
           <div>
             {user && user.nickname !== "" ? (
-              <div className="text-xl font-bold text-sky-700">
+              <div className="text-sm sm:text-base md:text-xl font-bold text-sky-700">
                 {user?.nickname}님이 작성한 글들을 확인해보세요.
               </div>
             ) : (
-              <div className="text-xl font-bold text-sky-700">
+              <div className="text-sm sm:text-base md:text-xl font-bold text-sky-700">
                 {user?.name}님이 작성한 글들을 확인해보세요.
               </div>
             )}
 
             <hr className="border-b-2 my-4 border-sky-700 w-full" />
           </div>
-          {session?.user?.name === user?.name &&
-            article
-              .filter((post) => post.disclosureStatus)
-              .map((post) => (
-                <div className="my-8 w-[400px] md:w-[768px]" key={post._id}>
-                  <Link
-                    href={`/article/@${post.writer}/${post._id}/${post.slug}`}
-                  >
-                    {post.thumbnailImage ? (
-                      <div className="h-[400px]">
-                        <img
-                          alt="thumbnail"
-                          className="rounded-md inline-block w-full h-full object-center object-cover"
-                          src={post.thumbnailImage}
-                        />
-                      </div>
-                    ) : (
-                      <div />
-                    )}
-                    <h1 className="text-2xl font-bold my-4 truncate">
-                      {post.title}
-                    </h1>
-                    <p className="text-base mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
-                      {post.content}
-                    </p>
-                  </Link>
-                  <div>
-                    {post.hashtag.map((item) => {
-                      return (
-                        <a
-                          key={item}
-                          href={`/hashtag/${item}`}
-                          className="text-sky-500 px-1 mx-2 my-4 cursor-pointer inline-block text-base"
-                        >
-                          {item}
-                        </a>
-                      );
-                    })}
-                  </div>
-                  <div className="flex flex-row truncate text-sm text-gray-400">
-                    <div className="">{post.createdAt}</div>
-                    <span className="px-2">·</span>
-                    <div>❤ {post.liked.length ? post.liked.length : 0}</div>
-                    <span className="px-2">·</span>
-                    <div className="bg-[#333333] text-white pl-2 pr-4 rounded">
-                      🗝 비공개
-                    </div>
-                  </div>
-                </div>
-              ))}
           {article
             .filter((post) => !post.disclosureStatus)
             .map((post) => (
-              <div className="my-8 w-[400px] md:w-[768px]" key={post._id}>
+              <div
+                className="my-8 w-[300px] sm:w-[400px] md:w-[768px]"
+                key={post._id}
+              >
                 <Link
                   href={`/article/@${post.writer}/${post._id}/${post.slug}`}
                 >
                   {post.thumbnailImage ? (
-                    <div className="h-[400px]">
+                    <div className="">
                       <img
                         alt="thumbnail"
                         className="rounded-md inline-block w-full h-full object-center object-cover"
@@ -405,7 +362,10 @@ function Post({
     return (
       <div className="w-full">
         {article.map((post) => (
-          <div className="my-16 mx-12 2xl:mx-80 3xl:mx-96" key={post._id}>
+          <div
+            className="my-16 mx-2 sm:mx-6 md:mx-12 2xl:mx-80 3xl:mx-96"
+            key={post._id}
+          >
             <Head>
               <title>{post.title}</title>
               <meta
@@ -414,11 +374,11 @@ function Post({
               />
               <meta name="keywords" content="BLOG, 블로그, Allog" />
             </Head>
-            <h1 className="text-4xl lg:text-5xl font-bold whitespace-pre-wrap">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold white break-all whitespace-pre-wrap">
               {post.title}
             </h1>
             <div className="flex flex-row justify-between mt-12">
-              <div className="flex flex-row items-center">
+              <div className="flex flex-row items-center text-xs sm:text-base">
                 <span className="font-bold ml-2">{post.writer}</span>
                 <span className="mx-2">·</span>
                 <span className="text-gray-500">{post.createdAt}</span>
@@ -427,7 +387,7 @@ function Post({
                 {session &&
                   session.user &&
                   session.user.name === slugs[0].substring(1) && (
-                    <div className="text-gray-400">
+                    <div className="flex items-center text-gray-400 text-xs sm:text-base">
                       <a
                         href={`/write?user=${slugs[0].substring(1)}&id=${
                           slugs[1]
@@ -453,14 +413,18 @@ function Post({
                       <button type="button" onClick={onClickAddLikedPost}>
                         🤍
                       </button>
-                      <span>{likedPost.length}</span>
+                      <span className="text-xs sm:text-base">
+                        {likedPost.length}
+                      </span>
                     </div>
                   ) : (
                     <div>
                       <button type="button" onClick={onClickRemoveLikedPost}>
                         ❤
                       </button>
-                      <span>{likedPost.length}</span>
+                      <span className="text-xs sm:text-base">
+                        {likedPost.length}
+                      </span>
                     </div>
                   )}
                 </span>
@@ -472,7 +436,7 @@ function Post({
                   <a
                     key={item}
                     href={`/hashtag/${item}`}
-                    className="text-sky-500 px-1 mx-2 my-4 cursor-pointer inline-block text-base"
+                    className="text-xs sm:text-base text-sky-500 px-1 mx-2 my-4 cursor-pointer inline-block"
                   >
                     {item}
                   </a>
@@ -500,24 +464,30 @@ function Post({
                 />
                 <div className="flex flex-col">
                   {user?.nickname !== "" ? (
-                    <div className="text-xl font-bold">{user?.nickname}</div>
+                    <div className="text-base sm:text-xl font-bold">
+                      {user?.nickname}
+                    </div>
                   ) : (
-                    <div className="text-xl font-bold">{user?.name}</div>
+                    <div className="text-base sm:text-xl font-bold">
+                      {user?.name}
+                    </div>
                   )}
-                  <div className="mt-1">{user?.userinfo}</div>
+                  <div className="mt-1 text-xs sm:text-base">
+                    {user?.userinfo}
+                  </div>
                 </div>
               </Link>
             </div>
           </div>
         ))}
-        <div className="mt-48 mx-12 2xl:mx-80 3xl:mx-96 text-xl text-gray-600">
+        <div className="mt-24 sm:mt-48 mx-4 sm:mx-6 md:mx-12 2xl:mx-80 3xl:mx-96 text-gray-600 text-base sm:text-xl">
           <span className="font-bold text-black">
             {comments.length ? comments.length : 0}
           </span>
           개의 댓글
         </div>
         {session && (
-          <div className="mx-12 my-12 2xl:mx-80 3xl:mx-96">
+          <div className="mx-4 sm:mx-6 md:mx-12 my-12 2xl:mx-80 3xl:mx-96">
             <textarea
               id="commentTextarea"
               rows={1}
@@ -537,7 +507,7 @@ function Post({
             </div>
           </div>
         )}
-        <div className="mx-12 2xl:mx-80 3xl:mx-96 mb-32">
+        <div className="mx-4 sm:mx-6 md:mx-12 2xl:mx-80 3xl:mx-96 mb-32">
           {comments.length > 0 &&
             comments.map((item, idx) => (
               <div key={item._id.toString()}>
@@ -627,11 +597,13 @@ function Post({
         {isDelete && (
           <div>
             <div className="bg-[#f9f9f9] z-40 delete_opacity opacity-95" />
-            <div className="delete_post z-50 delete_sd">
+            <div className="w-[300px] h-[200px] sm:w-[450px] sm:h-[300px] delete_post z-50 delete_sd">
               <div className="flex flex-col mx-6">
-                <h1 className="font-bold text-2xl mb-3 mt-12">포스트 삭제</h1>
+                <h1 className="font-bold text-2xl mb-3 mt-2 sm:mt-12">
+                  포스트 삭제
+                </h1>
                 <p className="mb-16">정말로 삭제하시겠습니까?</p>
-                <div className="flex justify-end mt-12">
+                <div className="flex justify-end sm:mt-12">
                   <button
                     onClick={() => setisDelete((value) => !value)}
                     type="button"

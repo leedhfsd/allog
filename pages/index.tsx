@@ -14,7 +14,7 @@ export default function Home() {
   if (!data) return <div />;
 
   return (
-    <div className="flex flex-wrap my-12 min-h-[728px]">
+    <div className="flex flex-wrap my-12 min-h-[728px] justify-center sm:justify-start">
       <Head>
         <title>Allog</title>
         <meta
@@ -44,10 +44,10 @@ export default function Home() {
                   className="rounded-md inline-block w-full sm:h-[180px] object-center object-cover"
                   src={article.thumbnailImage}
                 />
-                <h1 className="text-base font-bold my-1 truncate">
+                <h1 className="text-xl font-bold my-1 break-all sm:truncate">
                   {article.title}
                 </h1>
-                <p className="text-sm mb-6 line_clamp h-16 whitespace-pre-wrap">
+                <p className="text-sm mb-6 line_clamp h-16 break-all sm:whitespace-pre-wrap">
                   {article.content}
                 </p>
                 <div className="text-sm text-gray-500">
@@ -89,10 +89,10 @@ export default function Home() {
                   },
                 }}
               >
-                <h1 className="text-base font-bold mb-12 truncate">
+                <h1 className="text-xl break-all sm:truncate font-bold mb-12">
                   {article.title}
                 </h1>
-                <p className="text-sm mb-6 line_clamp h-16 whitespace-pre-wrap">
+                <p className="text-sm mb-6 line_clamp h-16 break-all sm:whitespace-pre-wrap">
                   {article.content}
                 </p>
                 <div className="w-[300px] h-[140px]" />
