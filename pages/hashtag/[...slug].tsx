@@ -68,7 +68,7 @@ function Hashtag({
                   {post.title}
                 </h1>
                 <p className="text-base mb-8 line_clamp whitespace-pre-wrap">
-                  {post.content}
+                  {post.plainText}
                 </p>
               </Link>
               <div>

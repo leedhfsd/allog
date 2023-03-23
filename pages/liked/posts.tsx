@@ -84,7 +84,7 @@ export default function Posts() {
                     {item.title}
                   </h1>
                   <p className="mb-2 line_clamp break-all md:whitespace-pre-wrap text-sm sm:text-base min-h-[16px] text-[#666666]">
-                    {item.content}
+                    {item.plainText}
                   </p>
                   <div className="flex text-sm">
                     <span className="font-bold">{item.writer}</span>

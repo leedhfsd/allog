@@ -38,6 +38,7 @@ async function postData(req: NextApiRequest, res: NextApiResponse) {
     _id: (await getNextSequence("articleId")) as ObjectId,
     title: formData.title,
     content: formData.content,
+    plainText: formData.plainText,
     hashtag: formData.hashtag,
     createdAt: formData.createdAt,
     liked: [],

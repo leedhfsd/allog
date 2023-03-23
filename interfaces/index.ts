@@ -4,6 +4,7 @@ export interface Article {
   _id: number;
   title: string;
   content: string;
+  plainText: string;
   hashtag: string[];
   createdAt: string;
   liked: string[];

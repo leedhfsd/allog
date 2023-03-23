@@ -142,7 +142,7 @@ function MyPage({
                     {post.title}
                   </h1>
                   <p className="text-base mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
-                    {post.content}
+                    {post.plainText}
                   </p>
                 </Link>
                 <div>
@@ -192,11 +192,11 @@ function MyPage({
           </div>
           <div>
             {user?.nickname !== "" ? (
-              <div className="text-xl font-bold text-sky-700">
+              <div className="text-sm sm:text-base md:text-xl font-bold text-sky-700">
                 {user?.nickname}님이 작성한 글이 아직 없네요!
               </div>
             ) : (
-              <div className="text-xl font-bold text-sky-700">
+              <div className="text-sm sm:text-base md:text-xl font-bold text-sky-700">
                 {user?.name}님이 작성한 글이 아직 없네요!
               </div>
             )}

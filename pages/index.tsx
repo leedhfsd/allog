@@ -48,7 +48,7 @@ export default function Home() {
                   {article.title}
                 </h1>
                 <p className="text-sm mb-6 line_clamp h-16 break-all sm:whitespace-pre-wrap">
-                  {article.content}
+                  {article.plainText}
                 </p>
                 <div className="text-sm text-gray-500">
                   <div className="truncate text-sm">{article.createdAt}</div>

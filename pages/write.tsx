@@ -19,6 +19,19 @@ import "github-markdown-css";
 import { Article } from "../interfaces";
 import { authOptions } from "./api/auth/[...nextauth]";
 
+function getPlainText(str: string) {
+  let content = str;
+  content = content.replace(/`([^`]+)`/g, "$1");
+  content = content.replace(/!\[[^\]]*\]\(([^)]+)\)/g, "");
+  content = content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1");
+  content = content.replace(/(\*|_){1,2}([^*_]+)\1{1,2}/g, "$2");
+  content = content.replace(/#{1,6}\s?(.*)/g, "$1");
+  content = content.replace(/^\s*[-+*]\s?(.*)/gm, "$1");
+  content = content.replace(/^\s*\d+\.\s?(.*)/gm, "$1");
+  content = content.replace(/^\s*>/gm, "");
+  return content.trim();
+}
+
 interface Certificate {
   name: string;
   email: string;
@@ -160,10 +173,12 @@ function Write({
             [thumbnail] = tmp;
           }
         }
+        const plainText = getPlainText(content);
         if (!data) {
           const formData = {
             title,
             content,
+            plainText,
             hashtag: tag,
             createdAt: `${kst.getFullYear()}년 ${
               kst.getMonth() + 1
@@ -188,6 +203,7 @@ function Write({
             _id: article._id,
             title,
             content,
+            plainText,
             hashtag: tag,
             slug: url,
             thumbnailImage: thumbnail,

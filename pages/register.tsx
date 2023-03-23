@@ -142,7 +142,7 @@ export default function Register() {
         <meta name="keywords" content="BLOG, 블로그, Allog, 회원가입" />
       </Head>
       <div className="flex flex-col items-center justify-center">
-        <div className="w-[400px] h-[768px] my-10">
+        <div className="w-[300px] sm:w-[400px] h-[768px] my-10">
           <div className="text-3xl font-bold text-center my-16">
             Allog 회원가입
           </div>
