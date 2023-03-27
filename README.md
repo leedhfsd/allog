@@ -7,6 +7,7 @@ Allog는 All + BLOG의 합성어로 모든 사용자가 자유롭게 내용을 �
 ![React](https://img.shields.io/badge/React-222222?style=for-the-badge&logo=React)
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=Next.js&logoColor=white)
 <img src="https://img.shields.io/badge/Tailwind CSS-06B6D4?style=for-the-badge&logo=Tailwind CSS&logoColor=white"/>
+<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white"/>
 
 
 ## 개발 도구의 선정 이유
