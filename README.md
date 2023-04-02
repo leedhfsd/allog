@@ -49,7 +49,8 @@ Allog는 All + BLOG의 합성어로 모든 사용자가 자유롭게 내용을 �
 특히 모바일 기기의 사용이 매우 늘어난 지금 반응형 웹 디자인에 꼼꼼하게 신경을 써 뛰어난 사용자 경험을 제공하고자 노력하였습니다.  
 
 ## 사용
-링크는 다음과 같습니다. [Allog](https://allog.vercel.app/) 현재 vercel을 이용하여 배포 중에 있습니다.  
+https://allog.vercel.app/ 
+현재 vercel을 이용하여 배포 중에 있습니다.  
 로컬 환경에서 테스트를 원하는 경우 환경변수를 작성해야 합니다.  
 
 **GITHUB_ID**=자신의 Github OAuth Client ID  
