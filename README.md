@@ -1,11 +1,10 @@
 ## 프로젝트명 
-프로젝트명은 Allog입니다.  
-Allog는 All + BLOG의 합성어로 모든 사용자가 자유롭게 내용을 기록할 수 있는 블로그 사이트가 되고자 하는 열망을 담았습니다.
+프로젝트명은 Allog입니다.  https://allog.vercel.app/ 에서 배포중입니다.
 
 ## 기술 스택
 ![Typescript](https://img.shields.io/badge/-Typescript-007acc?style=for-the-badge&logo=typescript&logoColor=ffffff)
-![React](https://img.shields.io/badge/React-222222?style=for-the-badge&logo=React)
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=Next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-222222?style=for-the-badge&logo=React)
 <img src="https://img.shields.io/badge/Tailwind CSS-06B6D4?style=for-the-badge&logo=Tailwind CSS&logoColor=white"/>
 <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white"/>
 
