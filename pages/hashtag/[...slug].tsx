@@ -87,7 +87,7 @@ function Hashtag({
               <div className="flex flex-row truncate text-sm text-gray-400">
                 <div className="">{post.createdAt}</div>
                 <span className="px-2">·</span>
-                <div>❤ {post.liked}</div>
+                <div>❤ {post.liked.length}</div>
               </div>
             </div>
           ))}
