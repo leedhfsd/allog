@@ -29,41 +29,30 @@ function MyPage({
           />
           <meta name="keywords" content="BLOG, 블로그, Allog" />
         </Head>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col mx-8">
           <div className="flex flex-row items-center mb-4">
             <img
-              className="rounded-full aspect-square mr-6"
+              className="rounded-full aspect-square mr-16"
               src={user?.image}
               width={128}
               height={128}
               alt="user-profile"
             />
-            <div>
-              {user && user.nickname !== "" ? (
-                <div className="text-sm sm:text-xl md:text-2xl font-bold">
-                  {user?.nickname}
-                </div>
-              ) : (
-                <div className="text-sm sm:text-xl md:text-2xl font-bold">
-                  {user?.name}
-                </div>
-              )}
-              <div className="mt-1 text-xs sm:text-base">{user?.userinfo}</div>
+            <div className="flex flex-col">
+              <div className="flex items-center">
+                {user && user.nickname !== "" ? (
+                  <div className="mr-4">{user?.nickname}</div>
+                ) : (
+                  <div className="mr-4">{user?.name}</div>
+                )}
+              </div>
+              <div className="text-xs my-4">
+                게시물 <span className="font-bold">{article.length}</span>
+              </div>
+              <div className="mt-1 text-xs">{user?.userinfo}</div>
             </div>
           </div>
-          <div>
-            {user && user.nickname !== "" ? (
-              <div className="text-sm sm:text-base md:text-xl font-bold text-sky-700">
-                {user?.nickname}님이 작성한 글들을 확인해보세요.
-              </div>
-            ) : (
-              <div className="text-sm sm:text-base md:text-xl font-bold text-sky-700">
-                {user?.name}님이 작성한 글들을 확인해보세요.
-              </div>
-            )}
-
-            <hr className="border-b-2 my-4 border-sky-700 w-full" />
-          </div>
+          <hr className="my-4 w-full" />
           {session?.user?.name === user?.name &&
             article
               .filter((post) => post.disclosureStatus)
@@ -79,7 +68,7 @@ function MyPage({
                       <div className="">
                         <img
                           alt="thumbnail"
-                          className="rounded-md inline-block w-full h-full object-center object-cover"
+                          className="rounded-md inline-block w-full h-[400px] object-center object-cover"
                           src={post.thumbnailImage}
                         />
                       </div>
@@ -90,7 +79,7 @@ function MyPage({
                       {post.title}
                     </h1>
                     <p className="text-base mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
-                      {post.content}
+                      {post.plainText}
                     </p>
                   </Link>
                   <div>
@@ -138,10 +127,8 @@ function MyPage({
                   ) : (
                     <div />
                   )}
-                  <h1 className="text-2xl font-bold my-4 truncate">
-                    {post.title}
-                  </h1>
-                  <p className="text-base mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
+                  <h1 className="font-bold my-4 truncate">{post.title}</h1>
+                  <p className="text-sm mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
                     {post.plainText}
                   </p>
                 </Link>
@@ -151,14 +138,14 @@ function MyPage({
                       <a
                         key={item}
                         href={`/hashtag/${item}`}
-                        className="text-sky-500 px-1 mx-2 my-4 cursor-pointer inline-block text-base"
+                        className="text-sky-500 my-2 cursor-pointer inline-block text-xs"
                       >
                         {item}
                       </a>
                     );
                   })}
                 </div>
-                <div className="flex flex-row truncate text-sm text-gray-400">
+                <div className="flex flex-row truncate text-xs text-gray-400">
                   <div className="">{post.createdAt}</div>
                   <span className="px-2">·</span>
                   <div>❤ {post.liked.length ? post.liked.length : 0}</div>
@@ -170,40 +157,30 @@ function MyPage({
     );
   }
   return (
-    <div>
-      <div className="flex flex-col py-12 items-center min-h-[748px]">
-        <div className="flex flex-col items-center">
-          <div className="flex flex-row items-center mb-8">
-            <img
-              className="rounded-full mr-6"
-              src={user?.image}
-              width={128}
-              height={128}
-              alt="user-profile"
-            />
-            <div className="flex flex-col">
-              {user?.nickname !== "" ? (
-                <div className="text-xl font-bold">{user?.nickname}</div>
-              ) : (
-                <div className="text-xl font-bold">{user?.name}</div>
-              )}
-              <div className="mt-1 text-xs sm:text-base">{user?.userinfo}</div>
-            </div>
-          </div>
-          <div>
-            {user?.nickname !== "" ? (
-              <div className="text-sm sm:text-base md:text-xl font-bold text-sky-700">
-                {user?.nickname}님이 작성한 글이 아직 없네요!
-              </div>
+    <div className="flex flex-col my-12 mx-8">
+      <div className="flex flex-row items-center mb-4">
+        <img
+          className="rounded-full aspect-square mr-16"
+          src={user?.image}
+          width={128}
+          height={128}
+          alt="user-profile"
+        />
+        <div className="flex flex-col">
+          <div className="flex items-center">
+            {user && user.nickname !== "" ? (
+              <div className="mr-4">{user?.nickname}</div>
             ) : (
-              <div className="text-sm sm:text-base md:text-xl font-bold text-sky-700">
-                {user?.name}님이 작성한 글이 아직 없네요!
-              </div>
+              <div className="mr-4">{user?.name}</div>
             )}
-            <hr className="border-b-2 my-4 border-sky-700 w-full" />
           </div>
+          <div className="text-xs my-4">
+            게시물 <span className="font-bold">{article.length}</span>
+          </div>
+          <div className="mt-1 text-xs">{user?.userinfo}</div>
         </div>
       </div>
+      <hr className="my-4 w-full" />
     </div>
   );
 }

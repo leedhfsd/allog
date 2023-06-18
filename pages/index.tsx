@@ -44,32 +44,25 @@ export default function Home() {
                   className="rounded-md inline-block w-full sm:h-[180px] object-center object-cover"
                   src={article.thumbnailImage}
                 />
-                <h1 className="text-xl font-bold my-1 break-all sm:truncate">
+                <h1 className="text-base font-bold my-1 break-all sm:truncate">
                   {article.title}
                 </h1>
                 <p className="text-sm mb-6 line_clamp h-16 break-all sm:whitespace-pre-wrap">
                   {article.plainText}
                 </p>
-                <div className="text-sm text-gray-500">
-                  <div className="truncate text-sm">{article.createdAt}</div>
-                  <div className="my-0.5 h-5 truncate text-sky-500">
-                    {article.hashtag.map((item) => (
-                      <span className="" key={item}>
-                        #{item}{" "}
-                      </span>
-                    ))}
-                  </div>
+                <div className="truncate text-sm text-gray-500">
+                  {article.createdAt}
                 </div>
-                <div className="flex justify-between">
+                <hr className="my-1 h-1 border-1" />
+                <div className="flex justify-between text-xs items-center">
                   <div>
                     <img
                       className="rounded-full bg-white h-8 w-8 bg-cover mr-1 inline"
                       alt="profile"
                       src={article.profile}
                     />
-                    <span className="text-xs font-bold">
-                      <span className="text-gray-500 text-xs">by</span>{" "}
-                      {article.writer}
+                    <span className="font-bold">
+                      <span className="text-gray-500">by</span> {article.writer}
                     </span>
                   </div>
                   <span>
@@ -96,24 +89,19 @@ export default function Home() {
                   {article.content}
                 </p>
                 <div className="w-[300px] h-[140px]" />
-                <div className="text-sm text-gray-500">
-                  <div className="truncate text-sm">{article.createdAt}</div>
-                  <div className="my-0.5 h-5 truncate text-sky-500">
-                    {article.hashtag.map((item) => (
-                      <span key={item}>#{item} </span>
-                    ))}
-                  </div>
+                <div className="truncate text-sm text-gray-500">
+                  {article.createdAt}
                 </div>
-                <div className="flex justify-between">
+                <hr className="my-1 h-1 border-1" />
+                <div className="flex justify-between text-xs items-center">
                   <div>
                     <img
                       className="rounded-full bg-white h-8 w-8 bg-cover mr-1 inline"
                       alt="profile"
                       src={article.profile}
                     />
-                    <span className="text-xs font-bold">
-                      <span className="text-gray-500 text-xs">by</span>{" "}
-                      {article.writer}
+                    <span className="font-bold">
+                      <span className="text-gray-500">by</span> {article.writer}
                     </span>
                   </div>
                   <span>
