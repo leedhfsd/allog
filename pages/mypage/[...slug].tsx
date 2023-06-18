@@ -49,7 +49,7 @@ function MyPage({
               <div className="text-xs my-4">
                 게시물 <span className="font-bold">{article.length}</span>
               </div>
-              <div className="mt-1 text-xs">{user?.userinfo}</div>
+              <div className="mt-1 text-sm">{user?.userinfo}</div>
             </div>
           </div>
           <hr className="my-4 w-full" />
@@ -75,10 +75,10 @@ function MyPage({
                     ) : (
                       <div />
                     )}
-                    <h1 className="text-2xl font-bold my-4 truncate">
+                    <h1 className="text-xl font-bold my-4 truncate">
                       {post.title}
                     </h1>
-                    <p className="text-base mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
+                    <p className="mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
                       {post.plainText}
                     </p>
                   </Link>
@@ -127,8 +127,10 @@ function MyPage({
                   ) : (
                     <div />
                   )}
-                  <h1 className="font-bold my-4 truncate">{post.title}</h1>
-                  <p className="text-sm mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
+                  <h1 className="text-xl font-bold my-4 truncate">
+                    {post.title}
+                  </h1>
+                  <p className="mb-8 line_clamp whitespace-pre-wrap min-h-[16px]">
                     {post.plainText}
                   </p>
                 </Link>
@@ -145,7 +147,7 @@ function MyPage({
                     );
                   })}
                 </div>
-                <div className="flex flex-row truncate text-xs text-gray-400">
+                <div className="flex flex-row truncate text-sm text-gray-400">
                   <div className="">{post.createdAt}</div>
                   <span className="px-2">·</span>
                   <div>❤ {post.liked.length ? post.liked.length : 0}</div>
@@ -177,7 +179,7 @@ function MyPage({
           <div className="text-xs my-4">
             게시물 <span className="font-bold">{article.length}</span>
           </div>
-          <div className="mt-1 text-xs">{user?.userinfo}</div>
+          <div className="mt-1 text-sm">{user?.userinfo}</div>
         </div>
       </div>
       <hr className="my-4 w-full" />
