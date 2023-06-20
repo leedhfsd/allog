@@ -43,8 +43,18 @@
 백엔드 개발에서는 HTTP 메서드를 이용해 자원에 대한 CRUD 작업을 진행하여 클라이언트와 서버 간 상호작용이 간결하고 명확한 REST 방법론을 채택하였습니다. RESTful한 API를 작성하고자 노력하여 API의 재사용성과 확장성을 높이고자 하였습니다.  
 * ### 프론트엔드  
 이전의 프로젝트들을 진행하면서 사용자를 위한 인터페이스를 설계하는 것이 매우 중요하고 쉽지 않은 부분이라는 것을 깨달아, 프로젝트의 주제를 다루는 실제 서비스 중인 웹이나 앱을 직접 사용해보면서 좋았던 부분들을 기록하여 사용자 인터페이스에 녹여내고자 노력하였습니다.
+특히 모바일 기기의 사용이 매우 늘어난 지금 반응형 웹 디자인에 꼼꼼하게 신경을 써 뛰어난 사용자 경험을 제공하고자 노력하였습니다. 
 
-특히 모바일 기기의 사용이 매우 늘어난 지금 반응형 웹 디자인에 꼼꼼하게 신경을 써 뛰어난 사용자 경험을 제공하고자 노력하였습니다.  
+## 스크린샷
+* ### 웹
+![web_1](https://github.com/leedhfsd/allog/assets/89757700/fd99eecd-827b-4a57-8de8-d832e1b8d225)
+![web_2](https://github.com/leedhfsd/allog/assets/89757700/435aca48-83f3-4f55-8d54-3de2e5e95f88)
+![web_3](https://github.com/leedhfsd/allog/assets/89757700/ddab7d65-6156-4a5a-a195-d08c866d5f06)
+
+* ### 모바일
+![mobile_1](https://github.com/leedhfsd/allog/assets/89757700/d611d00a-629e-4668-9d76-3d1437744e2e)
+![mobile_2](https://github.com/leedhfsd/allog/assets/89757700/2aca2573-4f62-440c-9e10-c58da59a02fb)
+![mobile_3](https://github.com/leedhfsd/allog/assets/89757700/8874f3bc-b083-4674-ba97-d54598ad7c3b)
 
 ## 사용
 https://allog.vercel.app/ 
