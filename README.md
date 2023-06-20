@@ -47,14 +47,14 @@
 
 ## 스크린샷
 * ### 웹
-[웹1](https://github.com/leedhfsd/allog/assets/89757700/fd99eecd-827b-4a57-8de8-d832e1b8d225){:target="_blank"}   
-[웹2](https://github.com/leedhfsd/allog/assets/89757700/435aca48-83f3-4f55-8d54-3de2e5e95f88){:target="_blank"}    
-[웹3](https://github.com/leedhfsd/allog/assets/89757700/ddab7d65-6156-4a5a-a195-d08c866d5f06){:target="_blank"}   
+[웹1](https://github.com/leedhfsd/allog/assets/89757700/fd99eecd-827b-4a57-8de8-d832e1b8d225)   
+[웹2](https://github.com/leedhfsd/allog/assets/89757700/435aca48-83f3-4f55-8d54-3de2e5e95f88)    
+[웹3](https://github.com/leedhfsd/allog/assets/89757700/ddab7d65-6156-4a5a-a195-d08c866d5f06)   
 
 * ### 모바일
-[모바일1](https://github.com/leedhfsd/allog/assets/89757700/d611d00a-629e-4668-9d76-3d1437744e2e){:target="_blank"}   
-[모바일2](https://github.com/leedhfsd/allog/assets/89757700/2aca2573-4f62-440c-9e10-c58da59a02fb){:target="_blank"}   
-[모바일3](https://github.com/leedhfsd/allog/assets/89757700/8874f3bc-b083-4674-ba97-d54598ad7c3b){:target="_blank"}    
+[모바일1](https://github.com/leedhfsd/allog/assets/89757700/d611d00a-629e-4668-9d76-3d1437744e2e)   
+[모바일2](https://github.com/leedhfsd/allog/assets/89757700/2aca2573-4f62-440c-9e10-c58da59a02fb)   
+[모바일3](https://github.com/leedhfsd/allog/assets/89757700/8874f3bc-b083-4674-ba97-d54598ad7c3b)    
 
 ## 사용
 https://allog.vercel.app/ 
