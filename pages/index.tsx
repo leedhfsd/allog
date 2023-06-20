@@ -1,17 +1,21 @@
 import Head from "next/head";
 import Link from "next/link";
-import useSwr from "swr";
+import { useEffect, useState } from "react";
 import { Article } from "../interfaces";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function Home() {
-  const { data, error, isLoading } = useSwr<Article[], Error>(
-    "api/posts",
-    fetcher,
-  );
-  if (error) return <div>게시글을 불러오는 것을 실패하였습니다.</div>;
-  if (isLoading) return <div />;
-  if (!data) return <div />;
+  const [data, setData] = useState<Article[]>([]);
+
+  useEffect(() => {
+    async function getPosts() {
+      const res = await fetch(`/api/posts`);
+      const post = (await res.json()) as Article[];
+      if (Array.isArray(post)) setData(post);
+    }
+    getPosts().catch(() => {
+      throw new Error();
+    });
+  }, [data]);
 
   return (
     <div className="flex flex-wrap my-12 min-h-[728px] justify-center sm:justify-start">
