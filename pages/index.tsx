@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import useSwr from "swr";
 import { Article } from "../interfaces";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
